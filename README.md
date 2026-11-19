@@ -41,6 +41,24 @@ Hashed targets for 10.2.0: gfx1100, gfx1151. Published by AMD: gfx90a/908/942/95
 gfx101x, gfx103x, gfx110x, gfx115x, gfx120x, gfx1250. Adding one downloads only
 its device wheel (~0.5 GB) and AOTriton images; core/libraries/devel are shared.
 
+**NixOS:**
+
+```nix
+inputs.therock.url = "github:lithinnon/therock-nixos";
+# in a module, with therock.nixosModules.default imported:
+therock = {
+  enable = true;
+  gfx = [ "gfx1151" ];        # several targets share one prefix
+  # devel = false;            # runtime only (no hipcc/headers): -3.3 GB
+  # seamless = true;          # nix-ld + cc: AMD's wheels run unmodified in any uv venv
+  # miopenFindMode = "FAST";  # system-wide; venvs from `therock link` do it after suspend
+};
+```
+
+Sets `ROCM_PATH`/`HIP_PATH` and puts `hipcc`, `rocminfo`, `amd-smi` and
+`therock` on `PATH`. `config.therock.rock` exposes the per-wheel store paths
+and AOTriton images.
+
 **C/C++:**
 
 ```sh
@@ -89,7 +107,7 @@ Verified on gfx1151 (Strix Halo) with TheRock 10.2.0 and torch 2.15.0:
 venvs torch matmul, MIOpen conv, SDPA (AOTriton) and Triton work.
 `nix flake check` compiles a HIP program in the sandbox.
 
-Not yet: NixOS module, uv2nix overlay, flash-attn/aiter packages.
+Not yet: uv2nix overlay, flash-attn/aiter packages.
 
 Not included in the wheels compared to AMD's tarball: Composable Kernel C++
 headers and instance libraries, hipTensor, rocALUTION, RDC, and the

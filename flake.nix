@@ -20,6 +20,8 @@
         inherit (therockLib) mkTheRock versions defaultVersion;
       };
 
+      nixosModules.default = import ./modules/nixos.nix therockLib;
+
       packages.${system} =
         lib.concatMapAttrs (gfx: r: {
           "runtime-${gfx}" = r.runtime;
@@ -30,23 +32,60 @@
           default = perTarget.gfx1151.therock;
         };
 
-      checks.${system} = lib.mapAttrs' (
-        gfx: r:
-        lib.nameValuePair "hipcc-${gfx}" (
-          pkgs.runCommand "therock-hipcc-${gfx}" { } ''
-            # Compile + link a HIP program for ${gfx} (needs no GPU).
-            cat > vadd.hip <<'EOF'
-            #include <hip/hip_runtime.h>
-            __global__ void vadd(const float* a, const float* b, float* c, int n) {
-              int i = blockIdx.x * blockDim.x + threadIdx.x; if (i < n) c[i] = a[i] + b[i];
-            }
-            int main() { float* p; hipMalloc(&p, 4); vadd<<<1, 1>>>(p, p, p, 1); return hipDeviceSynchronize(); }
-            EOF
-            unset ROCM_PATH HIP_PATH # the hipcc wrapper must find the prefix itself
-            ${r.sdk}/bin/hipcc --offload-arch=${gfx} -O2 vadd.hip -o $out
-          ''
-        )
-      ) perTarget;
+      checks.${system} =
+        lib.mapAttrs' (
+          gfx: r:
+          lib.nameValuePair "hipcc-${gfx}" (
+            pkgs.runCommand "therock-hipcc-${gfx}" { } ''
+              # Compile + link a HIP program for ${gfx} (needs no GPU).
+              cat > vadd.hip <<'EOF'
+              #include <hip/hip_runtime.h>
+              __global__ void vadd(const float* a, const float* b, float* c, int n) {
+                int i = blockIdx.x * blockDim.x + threadIdx.x; if (i < n) c[i] = a[i] + b[i];
+              }
+              int main() { float* p; hipMalloc(&p, 4); vadd<<<1, 1>>>(p, p, p, 1); return hipDeviceSynchronize(); }
+              EOF
+              unset ROCM_PATH HIP_PATH # the hipcc wrapper must find the prefix itself
+              ${r.sdk}/bin/hipcc --offload-arch=${gfx} -O2 vadd.hip -o $out
+            ''
+          )
+        ) perTarget
+        // {
+          # The module evaluates and its system packages build (no VM: needs no GPU).
+          nixos-module =
+            let
+              sys = lib.nixosSystem {
+                inherit system;
+                modules = [
+                  self.nixosModules.default
+                  {
+                    therock = {
+                      enable = true;
+                      gfx = [ "gfx1151" ];
+                      seamless = true;
+                      miopenFindMode = "FAST";
+                    };
+                    boot.loader.grub.enable = false;
+                    fileSystems."/" = {
+                      device = "none";
+                      fsType = "tmpfs";
+                    };
+                    system.stateVersion = "26.05";
+                  }
+                ];
+              };
+              env = sys.config.environment;
+            in
+            pkgs.runCommand "therock-nixos-module" { } ''
+              test -x ${sys.config.system.path}/bin/hipcc
+              test -x ${sys.config.system.path}/bin/rocminfo
+              test -x ${sys.config.system.path}/bin/therock
+              test "${env.variables.ROCM_PATH}" = "${sys.config.therock.rock.sdk}"
+              test "${env.variables.MIOPEN_FIND_MODE}" = FAST
+              ${lib.optionalString (!sys.config.programs.nix-ld.enable) "false"}
+              touch $out
+            '';
+        };
 
       apps.${system} = {
         gpu-check = {
