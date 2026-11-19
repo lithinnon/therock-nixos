@@ -74,6 +74,42 @@ placeholders `therock link` installs: the venv links to the runtime store path
 the system uses, and `nix run .#lock` never downloads or hashes them (~4 GB
 less). Sharing needs the same nixpkgs, so the template follows therock's.
 
+**flash-attn** (Triton backend through aiter; both from git, since the PyPI
+releases are stale and don't work with Triton 3.9). Add to `pyproject.toml`:
+
+```toml
+dependencies = [
+  "flash-attn @ git+https://github.com/Dao-AILab/flash-attention@68bd095cdd338c5171bccb9c200529f3620b85c9",
+  "amd-aiter @ git+https://github.com/ROCm/aiter@f0966b0aed0b38198e2e1ca1cff8cca343bbcb7e",
+]
+
+[tool.uv]
+no-build-isolation-package = ["flash-attn"]  # its setup.py imports torch
+
+[tool.uv.extra-build-variables]
+flash-attn = { FLASH_ATTENTION_TRITON_AMD_ENABLE = "TRUE", FLASH_ATTENTION_USE_SYSTEM_AITER = "TRUE" }
+amd-aiter = { PREBUILD_KERNELS = "0", ENABLE_CK = "0" }
+
+# Static metadata, so `uv lock` builds neither (both need torch and ROCm for it).
+[[tool.uv.dependency-metadata]]
+name = "flash-attn"
+version = "2.8.4"
+requires-dist = ["einops", "triton>=3.6.0", "amd-aiter", "setuptools", "wheel", "packaging", "psutil", "ninja"]
+
+[[tool.uv.dependency-metadata]]
+name = "amd-aiter"
+version = "0.1.23.dev93+gf0966b0ae"
+requires-dist = ["pybind11>=3.0.1", "ninja", "pandas", "einops", "psutil", "packaging", "flydsl==0.3.4.1", "pyyaml"]
+```
+
+In uv2nix projects the overlay builds both, including aiter's
+`module_aiter_core` (otherwise JIT-compiled on first import, ~15 s, needing
+the full SDK and ninja). In plain uv projects `uv sync` needs `ROCM_PATH` set
+to the SDK (the NixOS module does this), and the first `import aiter` compiles
+that module once. On gfx1151 it runs at ~15 TFLOP/s (bf16, causal, fwd), 18–24×
+torch's MATH attention; torch's own SDPA (AOTriton) is as fast for plain
+attention, flash-attn adds sliding windows, varlen and paged KV.
+
 **C/C++:**
 
 ```sh
@@ -123,7 +159,7 @@ and uv2nix venvs torch matmul, MIOpen conv, SDPA (AOTriton), Triton and
 torchvision 0.29.2 work.
 `nix flake check` compiles a HIP program in the sandbox.
 
-Not yet: flash-attn/aiter packages.
+
 
 Not included in the wheels compared to AMD's tarball: Composable Kernel C++
 headers and instance libraries, hipTensor, rocALUTION, RDC, and the

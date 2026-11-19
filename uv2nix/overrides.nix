@@ -32,6 +32,21 @@ let
   };
   inherit (rock) runtime;
 
+  # Python for building aiter's core module: torch (aiter imports it) on this ROCm.
+  aiterBuildEnv = final.mkVirtualEnv "aiter-build-env" (
+    lib.genAttrs (lib.filter (n: prev ? ${n}) [
+      "torch"
+      "pybind11"
+      "ninja"
+      "packaging"
+      "psutil"
+      "einops"
+      "pyyaml"
+      "pandas"
+      "flydsl"
+    ]) (_: [ ])
+  );
+
   # torch isn't in this site, so no AOTriton images (and no download of them).
   linker = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime; };
 
@@ -54,6 +69,9 @@ let
         mkdir -p $out/${sp}
         cd ${site}/${sp}
         cp -a ${entries} $out/${sp}/
+        # what pyproject.nix's output hook does: visible to dependents' builds
+        mkdir -p $out/nix-support
+        echo 'addToSearchPath NIX_PYPROJECT_PYTHONPATH "'$out/${sp}'"' > $out/nix-support/setup-hook
       '';
     });
   dist = n: "${n}-${version}.dist-info";
@@ -135,6 +153,91 @@ in
       '';
     }
   );
+}
+// lib.optionalAttrs (prev ? amd-aiter) {
+  # aiter (git): JIT-compiles module_aiter_core (~15 s, needs the full SDK and
+  # ninja) on first import, into a copy of itself under ~/.aiter when its own
+  # dir is read-only. Built here instead; it has no GPU code, so it is never
+  # considered stale for the running GPU.
+  amd-aiter = prev.amd-aiter.overrideAttrs (old: {
+    nativeBuildInputs =
+      (old.nativeBuildInputs or [ ])
+      ++ final.resolveBuildSystem {
+        setuptools = [ ];
+        setuptools-scm = [ ];
+        wheel = [ ];
+        packaging = [ ];
+        psutil = [ ];
+        ninja = [ ];
+      };
+    buildInputs = (old.buildInputs or [ ]) ++ [
+      pkgs.patchelf
+      pkgs.removeReferencesTo
+    ];
+    env = (old.env or { }) // {
+      SETUPTOOLS_SCM_PRETEND_VERSION = old.version;
+      PREBUILD_KERNELS = "0";
+      ENABLE_CK = "0";
+      ROCM_PATH = "${rock.sdk}";
+    };
+    postInstall = (old.postInstall or "") + ''
+      export HOME=$TMPDIR GPU_ARCHS="${lib.concatStringsSep ";" gfx}" ROCM_PATH=${rock.sdk}
+      export PATH=${aiterBuildEnv}/bin:$PATH PYTHONPATH=$out/${sp}
+      # `import aiter` asks rocminfo for the GPU; aiter.jit.core honours
+      # GPU_ARCHS, so load just that, from $out (not the source tree in cwd).
+      (cd $TMPDIR && ${aiterBuildEnv}/bin/python -c '
+      import importlib.util, inspect, sys
+      jit = sys.argv[1] + "/aiter/jit"
+      spec = importlib.util.spec_from_file_location("aiter.jit.core", jit + "/core.py")
+      core = importlib.util.module_from_spec(spec)
+      spec.loader.exec_module(core)
+      args = core.get_args_of_build("module_aiter_core") | {"md_name": "module_aiter_core"}
+      params = inspect.signature(core.build_module).parameters
+      core.build_module(**{k: v for k, v in args.items() if k in params})
+      ' $out/${sp})
+      rm -rf $out/${sp}/aiter/jit/build
+      # Built against the SDK, run against the runtime (keeps devel's 3.3 GB out
+      # of venvs); the build env's path is only in pybind11's __FILE__ strings.
+      core=$out/${sp}/aiter/jit/module_aiter_core.so
+      patchelf --set-rpath ${runtime}/lib:${lib.getLib pkgs.stdenv.cc.cc}/lib $core
+      remove-references-to -t ${aiterBuildEnv} $core
+      # Its read-only dir is copied to ~/.aiter/jit for later JIT builds; make
+      # that copy writable (copytree keeps the store's modes).
+      substituteInPlace $out/${sp}/aiter/jit/core.py --replace-fail \
+        'shutil.copytree(this_dir, home_jit_dir)' \
+        'shutil.copytree(this_dir, home_jit_dir, copy_function=shutil.copyfile); [os.chmod(r, 0o755) for r, _, _ in os.walk(home_jit_dir)]'
+      test -f $out/${sp}/aiter/jit/module_aiter_core.so
+    '';
+  });
+}
+// lib.optionalAttrs (prev ? flydsl) {
+  # aiter's MLIR DSL; its JIT runtime links HIP.
+  flydsl = prev.flydsl.overrideAttrs (linkAgainst [
+    "${runtime}/lib"
+    "${runtime}/lib/rocm_sysdeps/lib"
+  ]);
+}
+// lib.optionalAttrs (prev ? flash-attn) {
+  # flash-attn (git) with its Triton backend, on the aiter above.
+  flash-attn = prev.flash-attn.overrideAttrs (old: {
+    nativeBuildInputs =
+      (old.nativeBuildInputs or [ ])
+      ++ final.resolveBuildSystem {
+        setuptools = [ ];
+        wheel = [ ];
+        packaging = [ ];
+        psutil = [ ];
+        ninja = [ ];
+        torch = [ ]; # setup.py imports it (with its dependencies)
+        rocm = [ "libraries" ];
+        amd-aiter = [ ];
+      };
+    env = (old.env or { }) // {
+      FLASH_ATTENTION_TRITON_AMD_ENABLE = "TRUE";
+      FLASH_ATTENTION_USE_SYSTEM_AITER = "TRUE";
+      FLASH_ATTENTION_SKIP_CUDA_BUILD = "TRUE";
+    };
+  });
 }
 // lib.optionalAttrs (prev ? torchvision) {
   torchvision = prev.torchvision.overrideAttrs (

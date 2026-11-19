@@ -41,6 +41,11 @@ def _setup():
     cpath = [p for p in os.environ.get("CPATH", "").split(os.pathsep) if p]
     if {headers!r} not in cpath:
         os.environ["CPATH"] = os.pathsep.join(cpath + [{headers!r}])
+    # A ROCm root for tools that look for one (aiter, torch.utils.cpp_extension);
+    # the system's ROCM_PATH (the full SDK, from the NixOS module) wins.
+    os.environ.setdefault("ROCM_PATH", {rocm!r})
+    # flash-attn: the Triton backend (via aiter); its CK backend isn't built here.
+    os.environ.setdefault("FLASH_ATTENTION_TRITON_AMD_ENABLE", "TRUE")
     # After a suspend/resume, GPU timestamps read 0 until reboot (ROCm/MIOpen#3964),
     # which breaks MIOpen's timed kernel search; FAST picks kernels untimed.
     try:
@@ -130,7 +135,7 @@ def link(venv: Path):
 
     hook = sp / "_therock_host.py"
     remove(hook)
-    hook.write_text(HOST_HOOK.format(libs=CONFIG["hostLibs"], headers=CONFIG["libcHeaders"]))
+    hook.write_text(HOST_HOOK.format(libs=CONFIG["hostLibs"], headers=CONFIG["libcHeaders"], rocm=CONFIG["runtime"]))
     (sp / "therock.pth").write_text("import _therock_host\n")
 
     torch_lib = sp / "torch" / "lib"
