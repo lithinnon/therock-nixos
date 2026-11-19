@@ -7,8 +7,9 @@
 distributions (metadata + symlinks, no payload). uv and pip see them as
 installed at the locked version and never download AMD's ROCm wheels; torch
 & co. load ROCm from the Nix store. Re-run it after anything uninstalls them.
-It also links AOTriton's kernel images into torch, and adds a startup hook
-that provides what AMD's manylinux binaries expect from /usr.
+It adds a startup hook that provides what AMD's manylinux binaries expect from
+/usr, and, if torch was installed without AMD's kernel images (no
+torch[device-gfxNNNN] extra), links AOTriton's release images into it.
 """
 
 import base64
@@ -144,7 +145,7 @@ def link(venv: Path):
 
     print(f"therock: {venv} -> ROCm {CONFIG['version']} ({', '.join(CONFIG['gfx'])}) at {sdk}")
     if not torch_lib.is_dir() and CONFIG["aotriton"]:
-        print("therock: torch not installed yet; run `therock link` again after `uv sync` for AOTriton kernels")
+        print("therock: depend on torch[device-<gfx>] for its GPU kernels (incl. AOTriton's)")
 
 
 def main():

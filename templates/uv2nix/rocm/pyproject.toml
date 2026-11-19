@@ -1,0 +1,38 @@
+# ROCm GPU targets (uv workspace member), from therock-nixos. One extra per gfx
+# target AMD publishes; `nix run .#lock` hashes the ones in use.
+[project]
+name = "rocm-targets"
+version = "0"
+requires-python = ">=3.11"
+dependencies = [
+  "torch==2.15.*",
+  # AMD's torchvision wheels don't pin torch; keep these two in step.
+  "torchvision>=0.29.2,<0.30",
+]
+
+[project.optional-dependencies]
+gfx1010 = ["torch[device-gfx1010]", "torchvision[device-gfx1010]"]
+gfx1011 = ["torch[device-gfx1011]", "torchvision[device-gfx1011]"]
+gfx1012 = ["torch[device-gfx1012]", "torchvision[device-gfx1012]"]
+gfx1030 = ["torch[device-gfx1030]", "torchvision[device-gfx1030]"]
+gfx1031 = ["torch[device-gfx1031]", "torchvision[device-gfx1031]"]
+gfx1032 = ["torch[device-gfx1032]", "torchvision[device-gfx1032]"]
+gfx1033 = ["torch[device-gfx1033]", "torchvision[device-gfx1033]"]
+gfx1034 = ["torch[device-gfx1034]", "torchvision[device-gfx1034]"]
+gfx1035 = ["torch[device-gfx1035]", "torchvision[device-gfx1035]"]
+gfx1036 = ["torch[device-gfx1036]", "torchvision[device-gfx1036]"]
+gfx1100 = ["torch[device-gfx1100]", "torchvision[device-gfx1100]"]
+gfx1101 = ["torch[device-gfx1101]", "torchvision[device-gfx1101]"]
+gfx1102 = ["torch[device-gfx1102]", "torchvision[device-gfx1102]"]
+gfx1103 = ["torch[device-gfx1103]", "torchvision[device-gfx1103]"]
+gfx1150 = ["torch[device-gfx1150]", "torchvision[device-gfx1150]"]
+gfx1151 = ["torch[device-gfx1151]", "torchvision[device-gfx1151]"]
+gfx1152 = ["torch[device-gfx1152]", "torchvision[device-gfx1152]"]
+gfx1153 = ["torch[device-gfx1153]", "torchvision[device-gfx1153]"]
+gfx1200 = ["torch[device-gfx1200]", "torchvision[device-gfx1200]"]
+gfx1201 = ["torch[device-gfx1201]", "torchvision[device-gfx1201]"]
+gfx1250 = ["torch[device-gfx1250]", "torchvision[device-gfx1250]"]
+gfx908 = ["torch[device-gfx908]", "torchvision[device-gfx908]"]
+gfx90a = ["torch[device-gfx90a]", "torchvision[device-gfx90a]"]
+gfx942 = ["torch[device-gfx942]", "torchvision[device-gfx942]"]
+gfx950 = ["torch[device-gfx950]", "torchvision[device-gfx950]"]

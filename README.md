@@ -59,6 +59,21 @@ Sets `ROCM_PATH`/`HIP_PATH` and puts `hipcc`, `rocminfo`, `amd-smi` and
 `therock` on `PATH`. `config.therock.rock` exposes the per-wheel store paths
 and AOTriton images.
 
+**uv2nix projects:**
+
+```sh
+nix flake init -t github:lithinnon/therock-nixos
+nix run .#lock      # uv lock + hashes for this machine's GPU
+nix develop         # python, torch on the GPU, uv (`uv run` uses the Nix venv)
+```
+
+`therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; }` gives an overlay
+(`overlay gfx`), `venvSpec`, `perTarget`, `shell` and `lockApp`, the same
+interface as rocm-uv2nix. AMD's `rocm-sdk-*` wheels become the same
+placeholders `therock link` installs: the venv links to the runtime store path
+the system uses, and `nix run .#lock` never downloads or hashes them (~4 GB
+less). Sharing needs the same nixpkgs, so the template follows therock's.
+
 **C/C++:**
 
 ```sh
@@ -71,14 +86,13 @@ cmake -DCMAKE_PREFIX_PATH=$SDK ...                                # find_package
 directly needs `--rocm-path=$SDK` for library headers. `hipconfig --path`
 reports the core wheel's path.
 
-**Plain uv projects** (standard `pyproject.toml` with AMD's index; `uv.lock`
-stays portable to non-Nix machines):
+**Plain uv projects** (standard `pyproject.toml` with AMD's index and
+`torch[device-gfx1151]`; `uv.lock` stays portable to non-Nix machines):
 
 ```sh
 uv venv
 nix run .#therock-gfx1151 -- link   # placeholders for rocm-sdk-* -> shared runtime
 uv sync                             # fetches torch/triton only, never AMD's ROCm wheels
-nix run .#therock-gfx1151 -- link   # again, now that torch exists: AOTriton kernels
 ```
 
 `therock link` installs placeholder `rocm-sdk-core/-libraries/-device-<gfx>`
@@ -91,10 +105,11 @@ nixpkgs' Python and with uv-managed Python. Triton needs a C compiler on `PATH`.
 
 ## Fixes for upstream gaps
 
-- **AOTriton kernel images.** AMD's torch wheels ship `libaotriton_v2.so`
-  without the `torch/lib/aotriton.images` it loads kernels from, so torch's
-  fused SDPA fails on gfx1151 with `device kernel image is invalid`. The images
-  are fetched from AOTriton's releases and linked in.
+- **AOTriton kernel images.** torch loads them from `torch/lib/aotriton.images`,
+  shipped in AMD's per-family wheels (`amd-torch-device-gfx115x`, …) that only
+  `torch[device-gfxNNNN]` pulls in. Depending on `amd-torch-device-gfxNNNN`
+  directly misses them and fused SDPA fails with `device kernel image is
+  invalid`; then AOTriton's release images are linked in as a fallback.
 - **No `/usr`.** `rocm.cfg` gets glibc/gcc paths, and libstdc++ sits in the
   bundled sysdeps dir.
 - **Wheels can't hold symlinks.** Unversioned `.so` dev names are added to core,
@@ -104,10 +119,11 @@ nixpkgs' Python and with uv-managed Python. Triton needs a C compiler on `PATH`.
 
 Verified on gfx1151 (Strix Halo) with TheRock 10.2.0 and torch 2.15.0:
 `hipcc` compiles and runs kernels, `rocminfo`/`amd-smi` work, and in plain uv
-venvs torch matmul, MIOpen conv, SDPA (AOTriton) and Triton work.
+and uv2nix venvs torch matmul, MIOpen conv, SDPA (AOTriton), Triton and
+torchvision 0.29.2 work.
 `nix flake check` compiles a HIP program in the sandbox.
 
-Not yet: uv2nix overlay, flash-attn/aiter packages.
+Not yet: flash-attn/aiter packages.
 
 Not included in the wheels compared to AMD's tarball: Composable Kernel C++
 headers and instance libraries, hipTensor, rocALUTION, RDC, and the

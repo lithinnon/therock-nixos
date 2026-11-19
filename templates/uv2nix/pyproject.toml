@@ -1,0 +1,17 @@
+[project]
+name = "my-project"
+version = "0.1.0"
+# Keep in step with the python of your nixpkgs (python3 = 3.14 on unstable).
+requires-python = "==3.14.*"
+dependencies = ["torch", "torchvision"]
+
+[tool.uv]
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+
+[tool.uv.workspace]
+members = ["rocm"]
+
+# ROCm builds of torch & co. (AMD TheRock); PyPI for everything else.
+[[tool.uv.index]]
+name = "therock"
+url = "https://stable.repo.amd.com/rocm/whl-next/"

@@ -18,6 +18,13 @@
     {
       lib = {
         inherit (therockLib) mkTheRock versions defaultVersion;
+        # therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; }: see uv2nix/default.nix
+        uv2nix = import ./uv2nix { inherit therockLib; };
+      };
+
+      templates.default = {
+        path = ./templates/uv2nix;
+        description = "uv2nix project with ROCm torch on the shared TheRock; `nix run .#lock`, then `nix develop`";
       };
 
       nixosModules.default = import ./modules/nixos.nix therockLib;
