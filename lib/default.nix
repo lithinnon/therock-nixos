@@ -77,8 +77,10 @@ in
             ln -s ${lib.getLib gcc}/lib/libstdc++.so.6 ${lib.getLib gcc}/lib/libgcc_s.so.1 \
               $out/_rocm_sdk_core/lib/rocm_sysdeps/lib/
 
-            # amd-smi: stdlib-only python CLI + the `amdsmi` bindings in share/amd_smi.
-            sed -i '1c #!${pkgs.python3.interpreter}\nimport os as _o, sys as _s; _s.path.insert(0, _o.path.join(_o.path.dirname(_o.path.realpath(__file__)), "..", "share", "amd_smi"))' \
+            # amd-smi: stdlib-only python CLI + the `amdsmi` bindings in share/amd_smi
+            # and its modules in libexec/amdsmi_cli, both found from the script's
+            # real location (it is reached through layers of symlinks).
+            sed -i '1c #!${pkgs.python3.interpreter}\nimport os as _o, sys as _s; _d = _o.path.dirname(_o.path.realpath(__file__)); _s.path[:0] = [_o.path.join(_d, "..", "share", "amd_smi"), _o.path.join(_d, "..", "libexec", "amdsmi_cli")]' \
               $out/_rocm_sdk_core/bin/amd-smi
 
             # No /usr on NixOS: tell amdclang/hipcc where libc, CRT and libstdc++ are.

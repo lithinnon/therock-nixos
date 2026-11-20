@@ -56,7 +56,10 @@ therock = {
 ```
 
 Sets `ROCM_PATH`/`HIP_PATH` and puts `hipcc`, `rocminfo`, `amd-smi` and
-`therock` on `PATH`. `config.therock.rock` exposes the per-wheel store paths
+`therock` on `PATH` (`therock.binaries` limits which). ROCm is built with
+therock-nixos' own nixpkgs pin (`therock.pkgs`), so the system shares store
+paths with projects on the same therock-nixos revision whatever nixpkgs the
+system uses. `config.therock.rock` exposes the per-wheel store paths
 and AOTriton images.
 
 **uv2nix projects:**

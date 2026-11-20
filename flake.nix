@@ -27,7 +27,10 @@
         description = "uv2nix project with ROCm torch on the shared TheRock; `nix run .#lock`, then `nix develop`";
       };
 
-      nixosModules.default = import ./modules/nixos.nix therockLib;
+      nixosModules.default = import ./modules/nixos.nix {
+        inherit therockLib;
+        therockPkgs = pkgs;
+      };
 
       packages.${system} =
         lib.concatMapAttrs (gfx: r: {
@@ -71,6 +74,10 @@
                       gfx = [ "gfx1151" ];
                       seamless = true;
                       miopenFindMode = "FAST";
+                      binaries = [
+                        "rocminfo"
+                        "amd-smi"
+                      ];
                     };
                     boot.loader.grub.enable = false;
                     fileSystems."/" = {
@@ -84,10 +91,10 @@
               env = sys.config.environment;
             in
             pkgs.runCommand "therock-nixos-module" { } ''
-              test -x ${sys.config.system.path}/bin/hipcc
+              test ! -e ${sys.config.system.path}/bin/hipcc # not in `binaries`
               test -x ${sys.config.system.path}/bin/rocminfo
               test -x ${sys.config.system.path}/bin/therock
-              test "${env.variables.ROCM_PATH}" = "${sys.config.therock.rock.sdk}"
+              test "${env.variables.ROCM_PATH}" = "${perTarget.gfx1151.sdk}" # = the package, shared
               test "${env.variables.MIOPEN_FIND_MODE}" = FAST
               ${lib.optionalString (!sys.config.programs.nix-ld.enable) "false"}
               touch $out

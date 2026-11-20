@@ -6,7 +6,7 @@
 # gives ROCM_PATH/HIP_PATH, hipcc/rocminfo/amd-smi on PATH, the `therock` CLI
 # for uv/pip venvs, and (optionally) nix-ld so AMD's unmodified wheels run in
 # plain uv projects the way CUDA wheels do on other distros.
-therockLib:
+{ therockLib, therockPkgs }:
 {
   config,
   lib,
@@ -18,7 +18,7 @@ let
   cfg = config.therock;
   inherit (lib) mkOption types;
   rock = therockLib.mkTheRock {
-    inherit pkgs;
+    pkgs = cfg.pkgs;
     inherit (cfg) gfx version;
   };
   hostLibs = with pkgs; [
@@ -32,6 +32,10 @@ let
   tools = pkgs.runCommand "therock-tools-${cfg.version}" { } ''
     mkdir -p $out/bin
     for f in ${cfg.package}/bin/*; do
+      name=''${f##*/}
+      ${lib.optionalString (
+        cfg.binaries != null
+      ) ''case " ${toString cfg.binaries} " in *" $name "*) ;; *) continue ;; esac''}
       if [ -x "$f" ] && [ ! -d "$f" ]; then ln -s "$f" $out/bin/; fi
     done
   '';
@@ -53,6 +57,28 @@ in
       type = types.enum (lib.attrNames therockLib.versions);
       default = therockLib.defaultVersion;
       description = "TheRock release.";
+    };
+
+    pkgs = mkOption {
+      type = types.raw;
+      default = therockPkgs;
+      defaultText = lib.literalMD "therock-nixos' pinned nixpkgs";
+      description = ''
+        nixpkgs used to build ROCm (interpreters, libc, libstdc++ for AMD's
+        binaries). The default, therock-nixos' own pin, gives the same store
+        paths as projects using the same therock-nixos revision, whatever
+        nixpkgs the system uses. Set to `pkgs` to use the system's.
+      '';
+    };
+
+    binaries = mkOption {
+      type = types.nullOr (types.listOf types.str);
+      default = null;
+      example = [
+        "rocminfo"
+        "amd-smi"
+      ];
+      description = "Executables of the prefix to put on PATH; null for all (hipcc, amdclang, rocminfo, ...).";
     };
 
     devel = mkOption {
