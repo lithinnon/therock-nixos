@@ -1,15 +1,10 @@
-"""therock: use the shared TheRock (ROCm) of this machine from Python venvs.
+"""therock-site DIR: the rocm-sdk-* placeholder distributions for a venv's site-packages.
 
-  therock link [VENV]   point a venv's ROCm packages at the shared SDK
-  therock info          show the SDK this command was built for
-
-`therock link` installs placeholder rocm-sdk-core / -libraries / -device-<gfx>
-distributions (metadata + symlinks, no payload). uv and pip see them as
-installed at the locked version and never download AMD's ROCm wheels; torch
-& co. load ROCm from the Nix store. Re-run it after anything uninstalls them.
-It adds a startup hook that provides what AMD's manylinux binaries expect from
-/usr, and, if torch was installed without AMD's kernel images (no
-torch[device-gfxNNNN] extra), links AOTriton's release images into it.
+Build-time only (python/overrides.nix): writes into DIR's site-packages the
+rocm-sdk-core / -libraries / -device-<gfx> distributions as AMD's small stub
+packages + dist-info, their payload directories symlinked into the runtime
+prefix, and a startup hook (therock.pth) providing what AMD's manylinux
+binaries expect from /usr.
 """
 
 import base64
@@ -138,32 +133,13 @@ def link(venv: Path):
     hook.write_text(HOST_HOOK.format(libs=CONFIG["hostLibs"], headers=CONFIG["libcHeaders"], rocm=CONFIG["runtime"]))
     (sp / "therock.pth").write_text("import _therock_host\n")
 
-    torch_lib = sp / "torch" / "lib"
-    images = torch_lib / "aotriton.images"
-    if torch_lib.is_dir() and CONFIG["aotriton"] and not (images.exists() and not images.is_symlink()):
-        if images.is_symlink():
-            images.unlink()
-        images.mkdir()
-        for family_dir in CONFIG["aotriton"]:
-            for d in Path(family_dir, "aotriton.images").iterdir():
-                (images / d.name).symlink_to(d, target_is_directory=True)
-
-    print(f"therock: {venv} -> ROCm {CONFIG['version']} ({', '.join(CONFIG['gfx'])}) at {sdk}")
-    if not torch_lib.is_dir() and CONFIG["aotriton"]:
-        print("therock: depend on torch[device-<gfx>] and torchvision[device-<gfx>] for their GPU kernels (incl. AOTriton's)")
+    print(f"therock-site: {venv} -> ROCm {CONFIG['version']} ({', '.join(CONFIG['gfx'])}) at {sdk}")
 
 
 def main():
-    args = sys.argv[1:]
-    if not args or args[0] in ("-h", "--help"):
+    if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
         sys.exit(__doc__)
-    if args[0] == "link":
-        venv = Path(args[1] if len(args) > 1 else os.environ.get("VIRTUAL_ENV", ".venv"))
-        link(venv.resolve())
-    elif args[0] == "info":
-        print(json.dumps(CONFIG, indent=2))
-    else:
-        sys.exit(f"therock: unknown command {args[0]!r}\n\n{__doc__}")
+    link(Path(sys.argv[1]).resolve())
 
 
 if __name__ == "__main__":

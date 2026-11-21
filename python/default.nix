@@ -1,15 +1,14 @@
-# therock-nixos for uv2nix projects.
+# The ROCm side of pytorchProject (internal): the overlay that puts uv2nix
+# packages on the shared TheRock, for a lock in the "targets member" form of
+# ./stack (one gfx* extra per GPU target).
 #
-#   therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; } ->
-#     overlay gfx       pyproject.nix overlay; ROCm from the shared TheRock store paths
-#     venvSpec gfx      uv2nix dependency spec (workspace members + target extras)
-#     ready             gfx targets buildable from uv.lock + therock-nixos' manifest
-#     perTarget f       { default = f ready; gfxNNNN = f [ "gfxNNNN" ]; ... }
-#     shell gfx         { packages; env; shellHook; } to merge into mkShell
-#     lockApp           flake app: `uv lock` + hashes for the targets in use
+#   overlay gfx       pyproject.nix overlay; ROCm from the shared TheRock store paths
+#   venvSpec gfx      uv2nix dependency spec (the targets member + its gfx extras)
+#   ready             gfx targets buildable from the lock + therock-nixos' manifest
+#   shell gfx         { packages; env; shellHook; } to merge into mkShell
+#   lockApp           `uv lock` + hashes for the targets in use (`nix run .#stack-lock`)
 #
-# Unlike AMD's wheels unpacked per project, every venv (and the system, and
-# `therock link` venvs) shares one ROCm per (version, GPU targets): the
+# Every venv (and the system) shares one ROCm per (version, GPU set): the
 # rocm-sdk-* packages become metadata + symlinks into the runtime prefix.
 { therockLib }:
 {
@@ -50,17 +49,6 @@ in
       inherit (targets) devicePackagesFor;
     };
 
-  perTarget =
-    f:
-    lib.genAttrs targets.ready (t: f [ t ])
-    // {
-      default =
-        if targets.ready == [ ] then
-          throw "therock: no GPU target locked yet: run `nix run .#lock`"
-        else
-          f targets.ready;
-    };
-
   shell =
     gfx':
     let
@@ -75,7 +63,7 @@ in
       shellHook = ''
         for gfx in $(${detectGpus}); do
           case " ${toString gfx} " in *" $gfx "*) ;; *)
-            echo "therock: no kernels for your $gfx here; run \`nix run .#lock\`, then \`nix develop .#$gfx\`" >&2 ;;
+            echo "therock: this shell has no kernels for your $gfx (plain \`nix develop\` picks this machine's GPUs)" >&2 ;;
           esac
         done
       '';

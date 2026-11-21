@@ -7,7 +7,7 @@ any gfx* named on the command line. Other arguments go to `uv lock`.
 AMD's ROCm wheels (rocm-sdk-*) are never hashed or downloaded: the overlay
 replaces them with the shared TheRock store paths of therock-nixos.
 
-Usage: nix run .#lock [-- gfx1100] [-- --upgrade-package torch]
+Usage (in python/stack): nix run .#stack-lock [-- --upgrade-package torch]
 """
 
 import json

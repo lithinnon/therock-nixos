@@ -1,0 +1,8 @@
+{
+  "name": "therock-nixos",
+  "description": "How to give projects ROCm (torch, HIP) on an AMD GPU through therock-nixos",
+  "version": "0.1.0",
+  "author": { "name": "lithinnon" },
+  "homepage": "https://github.com/lithinnon/therock-nixos",
+  "keywords": ["rocm", "amd", "gpu", "nixos", "pytorch", "hip"]
+}

@@ -10,10 +10,7 @@
   ocl-icd,
 }:
 
-{
-  runtime,
-  aotriton ? [ ],
-}:
+{ runtime }:
 
 let
   inherit (runtime)
@@ -31,7 +28,6 @@ let
         rocm_sdk_core = "${core}";
         rocm_sdk_libraries = "${libraries}";
       };
-      aotriton = map toString aotriton;
       hostLibs = [
         "${cc}/lib/libstdc++.so.6"
         "${cc}/lib/libgcc_s.so.1"
@@ -46,6 +42,6 @@ let
     }
   );
 in
-writers.writePython3Bin "therock" { doCheck = false; } (
-  lib.replaceStrings [ "@config@" ] [ "${config}" ] (builtins.readFile ./therock.py)
+writers.writePython3Bin "therock-site" { doCheck = false; } (
+  lib.replaceStrings [ "@config@" ] [ "${config}" ] (builtins.readFile ./site.py)
 )

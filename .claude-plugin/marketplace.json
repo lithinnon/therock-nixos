@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "therock-nixos",
+  "description": "Agent skills for therock-nixos: the one ROCm (AMD TheRock) on NixOS, via flakes",
+  "owner": { "name": "lithinnon" },
+  "plugins": [
+    {
+      "name": "therock-nixos",
+      "description": "How to give projects ROCm (torch, HIP) on an AMD GPU through therock-nixos",
+      "source": "./plugin",
+      "category": "development",
+      "homepage": "https://github.com/lithinnon/therock-nixos"
+    }
+  ]
+}

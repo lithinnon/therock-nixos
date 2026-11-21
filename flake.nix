@@ -31,7 +31,17 @@
 
       # Targets with every hash in their manifest, i.e. buildable.
       hashed = lib.attrNames therockLib.versions.${therockLib.defaultVersion}.devices;
-      perTarget = lib.genAttrs hashed (gfx: therockLib.mkTheRock { inherit pkgs gfx; });
+      rocks = lib.genAttrs hashed (gfx: therockLib.mkTheRock { inherit pkgs gfx; });
+
+      mkProject = import ./lib/project.nix { inherit lib therockLib; };
+      # therock-nixos' own SDK shells, chosen like a project's
+      sdkShells = mkProject {
+        inherit pkgs;
+        ready = hashed;
+        version = therockLib.defaultVersion;
+        flakeRef = "path:${self}";
+        shell = gfx: therockLib.mkShell { inherit pkgs gfx; };
+      };
     in
     {
       lib = {
@@ -43,15 +53,20 @@
           gfxSetName
           families
           ;
-        # therock.lib.mkShell { pkgs; gfx; ... }: dev shell with the SDK
+        # mkShell { gfx; ... }: dev shell with the SDK for a GPU set
         mkShell = args: therockLib.mkShell ({ inherit pkgs; } // args);
-        # therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; }: see uv2nix/default.nix
-        uv2nix = import ./uv2nix { inherit therockLib; };
-        # therock.lib.pytorchProject { src = ./.; }: a plain uv project's flake
-        # outputs (see uv2nix/project.nix)
-        pytorchProject = import ./uv2nix/project.nix {
-          inherit therockLib inputs;
-          uv2nixLib = self.lib.uv2nix;
+        # mkProject { pkgs; flakeRef; ready; version; shell; build?; apps?; }:
+        # the run-time GPU selection of pytorchProject/hipProject (lib/project.nix)
+        inherit mkProject;
+        # pytorchProject { src = ./.; }: a uv or pip project (python/project.nix)
+        pytorchProject = import ./python/project.nix {
+          inherit therockLib mkProject inputs;
+          rocmPython = import ./python { inherit therockLib; };
+          therockPkgs = pkgs;
+        };
+        # hipProject { src = ./.; }: a HIP/C++ project (lib/hip.nix)
+        hipProject = import ./lib/hip.nix {
+          inherit therockLib mkProject;
           therockPkgs = pkgs;
         };
       };
@@ -60,30 +75,28 @@
         default = self.templates.pytorch;
         pytorch = {
           path = ./templates/pytorch;
-          description = "uv project with ROCm torch on the shared TheRock (or `nix run .#init` in an existing one)";
+          description = "Python project with ROCm torch on the shared TheRock (in an existing one: `nix run .#init`)";
         };
         hip = {
           path = ./templates/hip;
-          description = "HIP/C++ (CMake) project built against the shared TheRock";
+          description = "HIP/C++ (CMake) project on the shared TheRock";
         };
       };
 
-      devShells.${system} = therockLib.perSet hashed (gfx: therockLib.mkShell { inherit pkgs gfx; });
+      # nix develop: the SDK for this machine's GPUs (.#gfx1151, .#rdna3, .#all,
+      # .#shells.<set> as in projects)
+      inherit (sdkShells) devShells legacyPackages;
 
       nixosModules.default = import ./modules/nixos.nix {
         inherit therockLib;
         therockPkgs = pkgs;
       };
 
-      packages.${system} =
-        lib.concatMapAttrs (gfx: r: {
-          "runtime-${gfx}" = r.runtime;
-          "sdk-${gfx}" = r.sdk;
-          "therock-${gfx}" = r.therock;
-        }) perTarget
-        // {
-          default = perTarget.gfx1151.therock;
-        };
+      # runtime-<set>, sdk-<set> per target, family and `all`
+      packages.${system} = lib.concatMapAttrs (n: r: {
+        "runtime-${n}" = r.runtime;
+        "sdk-${n}" = r.sdk;
+      }) (therockLib.perSet hashed (gfx: therockLib.mkTheRock { inherit pkgs gfx; }));
 
       checks.${system} =
         lib.mapAttrs' (
@@ -102,10 +115,10 @@
               ${r.sdk}/bin/hipcc --offload-arch=${gfx} -O2 vadd.hip -o $out
             ''
           )
-        ) perTarget
+        ) rocks
         // (
           let
-            r = perTarget.gfx1151;
+            r = rocks.gfx1151;
             mkSystem =
               extra:
               lib.nixosSystem {
@@ -170,6 +183,8 @@
                 test "${sys.config.environment.etc."therock/targets".text}" = "gfx1100 gfx1151
                 "
                 test "${sys.config.environment.etc."therock/version".text}" = "10.2.0
+                "
+                test "${sys.config.environment.etc."therock/runtime".text}" = "${sys.config.therock.rock.runtime}
                 "
                 test -e ${exclusiveCheckOf sys} # passes: only TheRock
                 touch $out
@@ -279,7 +294,7 @@
               let
                 p = self.lib.pytorchProject { src = ./tests/pytorch; };
                 one = p.packages.${system}.gfx1151;
-                two = p.legacyPackages.${system}.venvs."gfx1100+gfx1151";
+                two = p.legacyPackages.${system}.builds."gfx1100+gfx1151";
               in
               pkgs.runCommand "therock-pytorch-project"
                 {
@@ -303,24 +318,62 @@
                   touch $out
                 '';
 
-            # templates/hip builds against the SDK and links only the runtime.
-            hip-template = pkgs.stdenv.mkDerivation {
-              name = "therock-hip-template";
-              src = ./templates/hip;
-              nativeBuildInputs = [
-                pkgs.cmake
-                pkgs.ninja
-                r.hook
-              ];
-              disallowedReferences = [
-                r.sdk
-                r.devel
-              ];
-            };
+            # Every command and therock.lib function the plugin skill names exists.
+            skill-names =
+              let
+                text = builtins.readFile ./plugin/skills/therock-nixos/SKILL.md;
+                found = re: lib.unique (lib.concatLists (lib.filter builtins.isList (builtins.split re text)));
+                projectApps = lib.concatMap (p: lib.attrNames p.apps.${system}) [
+                  (self.lib.pytorchProject { src = ./tests/pytorch; })
+                  (self.lib.hipProject { src = ./templates/hip; })
+                  self
+                ];
+                missing =
+                  lib.filter (n: !(self.lib ? ${n})) (found "therock\\.lib\\.([A-Za-z]+)")
+                  ++ lib.filter (n: !(lib.elem n projectApps)) (found "nix run \\.#([a-z-]+)")
+                  ++ lib.filter (n: !(self.apps.${system} ? ${n} || self.templates ? ${n})) (
+                    found "github:lithinnon/therock-nixos#([a-z-]+)"
+                  );
+              in
+              assert lib.assertMsg (
+                missing == [ ]
+              ) "plugin/skills/therock-nixos/SKILL.md names what no longer exists: ${toString missing}";
+              pkgs.runCommand "therock-skill-names" { } "touch $out";
+
+            # A pip project: requirements.txt + Nix's requirements.uv.lock.
+            pip-project =
+              let
+                venv = (self.lib.pytorchProject { src = ./tests/pip; }).packages.${system}.gfx1151;
+                parsed = import ./python/requirements.nix { inherit lib; } ./tests/pip/requirements.txt;
+              in
+              assert
+                parsed == {
+                  dependencies = [
+                    "torch"
+                    "torchvision"
+                    "numpy>=2"
+                    "packaging; python_version >= '3.10'"
+                  ];
+                  constraints = [ "numpy<3" ];
+                };
+              pkgs.runCommand "therock-pip-project" { } ''
+                HOME=$TMPDIR ${venv}/bin/python -c "import torch, numpy, packaging; assert torch.version.hip; print(torch.__version__)"
+                touch $out
+              '';
+
+            # templates/hip (hipProject) builds against the SDK, links only the runtime.
+            hip-template =
+              (self.lib.hipProject { src = ./templates/hip; }).packages.${system}.gfx1151.overrideAttrs
+                {
+                  disallowedReferences = [
+                    r.sdk
+                    r.devel
+                  ];
+                };
           }
         );
 
-      apps.${system} = {
+      apps.${system} = sdkShells.apps.${system} // {
         gpu-check = {
           type = "app";
           meta.description = "Verify the SDK on this machine's GPU: HIP kernel, rocBLAS, rocminfo, amd-smi";
@@ -336,7 +389,7 @@
               text =
                 lib.replaceStrings
                   [ "@targets@" ]
-                  [ (lib.concatMapAttrsStringSep " " (gfx: r: "[${gfx}]=${r.sdk}") perTarget) ]
+                  [ (lib.concatMapAttrsStringSep " " (gfx: r: "[${gfx}]=${r.sdk}") rocks) ]
                   (builtins.readFile ./apps/gpu-check.sh);
             }
           );
@@ -344,7 +397,7 @@
 
         init = {
           type = "app";
-          meta.description = "Make the uv project here (or a new one) use ROCm torch via therock-nixos";
+          meta.description = "Make the Python project here (uv or pip; or a new one) use ROCm torch via therock-nixos";
           program = lib.getExe (
             pkgs.writeShellApplication {
               name = "therock-init";
@@ -360,9 +413,11 @@
                 UV_PYTHON = pkgs.python3.interpreter;
                 UV_PYTHON_DOWNLOADS = "never";
               };
-              text = lib.replaceStrings [ "@template@" ] [ "${./templates/pytorch}" ] (
-                builtins.readFile ./apps/init.sh
-              );
+              text =
+                lib.replaceStrings
+                  [ "@template@" "@therock@" ]
+                  [ "${./templates/pytorch}" "github:lithinnon/therock-nixos" ]
+                  (builtins.readFile ./apps/init.sh);
             }
           );
         };
@@ -371,13 +426,13 @@
         # every GPU target (run in a checkout; downloads ~3 GB).
         stack-lock = {
           type = "app";
-          meta.description = "Lock + hash uv2nix/stack (the ROCm torch stack) for every GPU target";
+          meta.description = "Lock + hash python/stack (the ROCm torch stack) for every GPU target";
           program = "${pkgs.writeShellScript "therock-stack-lock" ''
-            cd "$(${pkgs.git}/bin/git rev-parse --show-toplevel)/uv2nix/stack" || exit 1
+            cd "$(${pkgs.git}/bin/git rev-parse --show-toplevel)/python/stack" || exit 1
             exec ${
-              (self.lib.uv2nix {
+              (import ./python { inherit therockLib; } {
                 inherit pkgs;
-                lockFile = ./uv2nix/stack/uv.lock;
+                lockFile = ./python/stack/uv.lock;
               }).lockApp.program
             } \
               "$@" $(${pkgs.gnugrep}/bin/grep -oE '^gfx[0-9a-f]+' pyproject.toml)

@@ -1,7 +1,7 @@
 # pyproject.nix overrides: AMD TheRock wheels from the shared therock-nixos store paths.
 #
 #  * rocm-sdk-core / -libraries / -device-<gfx> are not fetched. They become
-#    the same placeholder distributions `therock link` puts in plain venvs:
+#    placeholder distributions (./site):
 #    AMD's small stub packages + dist-info, with the payload directories
 #    (_rocm_sdk_core/lib, ...) symlinked into the runtime prefix for `gfx`.
 #    rocm_sdk finds libraries relative to those stubs, and ROCm libraries
@@ -49,13 +49,12 @@ let
     ]) (_: [ ])
   );
 
-  # torch isn't in this site, so no AOTriton images (and no download of them).
-  linker = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime; };
+  linker = pkgs.callPackage ./site { } { inherit runtime; };
 
-  # What `therock link` installs, built once per (version, gfx, python).
+  # The placeholders' files, built once per (version, gfx, python).
   site = pkgs.runCommand "therock-site-${version}-${lib.concatStringsSep "+" gfx}" { } ''
     mkdir -p $out/${sp}
-    ${linker}/bin/therock link $out > /dev/null
+    ${linker}/bin/therock-site $out > /dev/null
   '';
 
   # A locked package replaced by some of `site`'s entries; keeps uv2nix's

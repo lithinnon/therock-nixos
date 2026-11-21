@@ -1,0 +1,7 @@
+# core
+torch            # GPU: swapped for ROCm by therock-nixos
+--extra-index-url https://download.pytorch.org/whl/cpu
+-r requirements-extra.txt
+-c constraints.txt
+
+packaging; python_version >= '3.10' --hash=sha256:0000

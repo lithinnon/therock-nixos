@@ -5,7 +5,6 @@
 #   runtime                flat ROCm prefix without the compiler (what torch needs)
 #   sdk                    runtime + devel: ROCM_PATH for hipcc, headers, CMake
 #   aotriton               AOTriton kernel images for these targets
-#   therock                CLI: `therock link` points Python venvs at `runtime`
 #   hook                   setup hook: build HIP software against sdk, linking runtime
 #   relink pkg             `pkg` (built on another ROCm) moved onto this one
 { lib }:
@@ -225,7 +224,6 @@ in
           sdk
           aotriton
           ;
-        therock = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime aotriton; };
 
         # Build HIP software against the SDK; it links the runtime.
         hook = pkgs.makeSetupHook {
