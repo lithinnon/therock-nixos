@@ -150,7 +150,7 @@ def link(venv: Path):
 
     print(f"therock: {venv} -> ROCm {CONFIG['version']} ({', '.join(CONFIG['gfx'])}) at {sdk}")
     if not torch_lib.is_dir() and CONFIG["aotriton"]:
-        print("therock: depend on torch[device-<gfx>] for its GPU kernels (incl. AOTriton's)")
+        print("therock: depend on torch[device-<gfx>] and torchvision[device-<gfx>] for their GPU kernels (incl. AOTriton's)")
 
 
 def main():

@@ -6,6 +6,8 @@
 #   sdk                    runtime + devel: ROCM_PATH for hipcc, headers, CMake
 #   aotriton               AOTriton kernel images for these targets
 #   therock                CLI: `therock link` points Python venvs at `runtime`
+#   hook                   setup hook: build HIP software against sdk, linking runtime
+#   relink pkg             `pkg` (built on another ROCm) moved onto this one
 { lib }:
 
 let
@@ -130,17 +132,64 @@ in
       ) (lib.unique (lib.filter (f: f != null) (map (aotritonFamily m.aotriton.images) targets)));
 
       runtime = mkPrefix false;
-    in
-    {
-      inherit
-        core
-        libraries
-        devel
-        devices
-        runtime
-        aotriton
-        ;
       sdk = mkPrefix true;
-      therock = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime aotriton; };
-    };
+
+      rock = {
+        inherit
+          core
+          libraries
+          devel
+          devices
+          runtime
+          sdk
+          aotriton
+          ;
+        therock = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime aotriton; };
+
+        # Build HIP software against the SDK; it links the runtime.
+        hook = pkgs.makeSetupHook {
+          name = "therock-hook";
+          propagatedBuildInputs = [ pkgs.patchelf ];
+          substitutions = {
+            inherit sdk runtime;
+            targets = lib.concatStringsSep ";" targets;
+            toolchain = pkgs.writeText "therock-toolchain.cmake" ''
+              set(GPU_TARGETS "${lib.concatStringsSep ";" targets}" CACHE STRING "AMD GPU targets (therock-nixos)")
+              set(CMAKE_HIP_ARCHITECTURES "${lib.concatStringsSep ";" targets}" CACHE STRING "")
+            '';
+          };
+        } ./hook.sh;
+
+        # Move a package built against another ROCm onto this one.
+        relink = import ./relink.nix { inherit lib pkgs rock; };
+      };
+    in
+    rock;
+
+  # mkShell { gfx; pkgs?; version?; ...mkShell args }: a dev shell with the
+  # SDK (hipcc, headers, CMake packages) and the target variables set.
+  mkShell =
+    {
+      pkgs,
+      gfx,
+      version ? defaultVersion,
+      packages ? [ ],
+      ...
+    }@args:
+    let
+      rock = (import ./. { inherit lib; }).mkTheRock { inherit pkgs gfx version; };
+    in
+    pkgs.mkShell (
+      removeAttrs args [
+        "pkgs"
+        "gfx"
+        "version"
+      ]
+      // {
+        packages = [ rock.hook ] ++ packages;
+        passthru = (args.passthru or { }) // {
+          inherit rock;
+        };
+      }
+    );
 }

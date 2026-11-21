@@ -4,7 +4,8 @@ usage: farm.py OUT ROOT... [--devel DEVEL_ROOT]
 
 Each ROOT is a wheel payload dir (_rocm_sdk_core, _rocm_sdk_libraries of the
 libraries wheel or of a device wheel). Every file becomes OUT/<relpath> -> its
-store path, so the bytes stay in the per-wheel store paths and are shared.
+store path, so the bytes stay in the per-wheel store paths and are shared
+(except CMake package configs, which are copied: see below).
 Later roots win: device wheels drop their kernels into the libraries tree.
 
 ROCm libraries find siblings and kernel data relative to the path they were
@@ -75,8 +76,20 @@ def main():
                 continue  # already present at the same relpath
             dropped += 1  # e.g. optional rocm-profiler wheel, or a GPU target not selected
 
+    # CMake package configs locate their install prefix from their own real
+    # path, which for a link is the wheel's tree, not this prefix: copy them.
+    copied = 0
+    for d, _, files in os.walk(out):
+        for n in files:
+            p = os.path.join(d, n)
+            if n.endswith(".cmake") and os.path.islink(p):
+                data = open(p, "rb").read()
+                os.remove(p)
+                open(p, "wb").write(data)
+                copied += 1
+
     print(
-        f"farm: {sum(1 for _ in entries(out))} entries; {overridden} overridden; "
+        f"farm: {sum(1 for _ in entries(out))} entries; {copied} CMake files copied; {overridden} overridden; "
         f"devel links kept {kept}, redirected {redirected}, dropped {dropped}"
     )
 
