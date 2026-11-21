@@ -15,8 +15,31 @@
 
   # Per-GPU kernel wheels (rocm-sdk-device-<gfx>).
   devices = {
+    gfx1010 = "sha256-MjacquLIvmEMb30rRWbBqzwXSoeCjGr2vv8xyfuq7JQ=";
+    gfx1011 = "sha256-6in7hOMtsI20RIKf9llEUksnMmpZ30Imsv+flliIxNE=";
+    gfx1012 = "sha256-RK1TotG4+3NnEas0THZQWKtaQVf7qzvkyIIr8iZRfpU=";
+    gfx1030 = "sha256-PU/ZtFpLuXLYoG3EfxV2Y2Po7JnhGnMRfmSja76z5/s=";
+    gfx1031 = "sha256-j1pnbKwCAF58Mp27wSTOKfm3L5PTmDqWzZO/1MX+mO8=";
+    gfx1032 = "sha256-Y4W+9AVF1y4fhMd4h0qrpcTJNEgjc5QDr2sGTH7ZZCM=";
+    gfx1033 = "sha256-w/eaMZ1DaEjmDnjIJhQmP27jjQZHLM08i6Mwa4jGnyY=";
+    gfx1034 = "sha256-99JHJ5xoy8lkh5bgt/NcqdGrS7C7wUfTmwxt7GkLYCQ=";
+    gfx1035 = "sha256-mDrmbLk43shfOSJF/8sSrBFnGQbP7UOdnRJ/nwaLkLw=";
+    gfx1036 = "sha256-Tdb1XBtpnBhUf8GeE2+ZIcYeh/DhIBVmeWNurFkEVIY=";
     gfx1100 = "sha256-Tiw5TORsWUuoWWi2Fb/fy1uUXX3rRd7UcOz7RlyVkbg=";
+    gfx1101 = "sha256-vLO6cHAoWySBl4jv97/sPUKkPFYYjQW+uim32dEGpZI=";
+    gfx1102 = "sha256-KWpIJ5qwrwxXgNR5ZjTVEF0PBWDLr/2CrDBtjUkxqeo=";
+    gfx1103 = "sha256-gq/CLEYYvb4ve2xAtcN3byQj+EMnaneGnKVKC+flucQ=";
+    gfx1150 = "sha256-L/R3HoxwjCr10hmB7cukYUpkgSpxZdVhc40s7ywZXAE=";
     gfx1151 = "sha256-rm8CK/WfVWWzqIRA3Vp8Z67XPTP6QqyJA268243xQog=";
+    gfx1152 = "sha256-0rQLH8sptrp3g7tSJbLse+7eKtWz58IFBh18NwqsjHU=";
+    gfx1153 = "sha256-3bmEZ4J7OMv+cPybtBNdlXutkCYSofCFS73hnAeMM78=";
+    gfx1200 = "sha256-dzIGnc/0xkm2prToDL6BDrV9/m3dncXcVG5EZkOJdSo=";
+    gfx1201 = "sha256-1pNOhds0ZCOOXnq9etohx+E+lFi9GeWcPxCQgNy0Usk=";
+    gfx1250 = "sha256-1sHhuQdnn4aKKusZOY7uEJJoIOgr5oRQVSnifKpTkjc=";
+    gfx908 = "sha256-QGZHROEKgBvU8MSGE6s56nTtXR+j7eGfGCZDNYTjnL8=";
+    gfx90a = "sha256-R6uosj4HlQcbr+evkpalOOXcFOA9TTJ0VmtgpuxFnVY=";
+    gfx942 = "sha256-MgXpIC+WxnIH1SHDwD53AvV60D0labZypIo0U+NeXAY=";
+    gfx950 = "sha256-WGywEww6n0vsH8w+ZG/tuFdMSUYbv//57ulqKnaXu/o=";
   };
 
   # Kernel images torch's AOTriton needs but AMD's torch wheels don't ship
@@ -26,6 +49,11 @@
     images = {
       gfx110x = "sha256-/Hxuq+K81cUjsYinTbS/WUzqDZfX0h8/Lq0skTVLoZo=";
       gfx115x = "sha256-rwBXp+KlfkX6ANB76szw/In1iqRVRYqdXtXAHJ2Xtdw=";
+      gfx120x = "sha256-CybY7H97iwswkwK+gb/ZiNLZNgubTHvUO7MFwaIdcow=";
+      gfx1250 = "sha256-6Cqf84cscDpyteEmRt+Oe07JZOVAgaPYJAjljYs/fh0=";
+      gfx90a = "sha256-xbzbLYd6D4Xn0A3nTXOF/NUbH4Fv4/gEcL5wLwPFjvU=";
+      gfx942 = "sha256-RiD+ZPyQKf06W9Ck5eFv3Nnao6abTiRVrHGG/XF1HbE=";
+      gfx950 = "sha256-WtFJH9+Fx/uXPkgx8z1erfEOBeBikeL/Rg/JKZDKOBw=";
     };
   };
 }
