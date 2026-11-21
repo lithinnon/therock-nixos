@@ -118,7 +118,12 @@ nix develop         # python, torch on the GPU, uv (`uv run` uses the Nix venv)
 runtime, and a startup hook (`therock.pth`) providing libstdc++ & co., libc
 headers for MIOpen's JIT, and `MIOPEN_FIND_MODE=FAST` after a suspend (GPU
 timers break, [ROCm/MIOpen#3964](https://github.com/ROCm/MIOpen/issues/3964)).
-`nix run .#lock` never downloads or hashes them (~4 GB less). The shell has a
+`nix run .#lock` never downloads or hashes them (~4 GB less). torch, torchvision
+and triton are also one store path for every GPU set and every project on the
+same lock: their per-GPU kernel packs are separate packages the venv merges
+in, and the set-specific part (where those packs are, a 32 MB copy of
+libaotriton beside the set's AOTriton images, since both loaders resolve real
+paths) comes with the venv's placeholder. The shell has a
 C compiler for Triton and `torch.compile`. Depend on `torch[device-gfxNNNN]`
 and `torchvision[device-gfxNNNN]`: their GPU kernels (and AOTriton's) are in
 those extras.

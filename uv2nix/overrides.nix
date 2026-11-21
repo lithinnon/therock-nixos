@@ -11,11 +11,13 @@
 #  * The rocm-sdk-core placeholder carries a startup hook (therock.pth) that
 #    provides what the manylinux binaries expect from /usr: libstdc++ & co.,
 #    libc headers for MIOpen's JIT, and MIOPEN_FIND_MODE=FAST after a suspend.
-#  * torch & co. are ordinary wheels: autoPatchelf'd against the runtime. Their
-#    per-GPU kernel packs (amd-torch-device-*) are merged into their directory,
-#    where torch looks for them. AOTriton's kernel images come from AMD's
-#    family wheels (amd-torch-device-gfx115x, ...) that torch[device-gfxNNNN]
-#    pulls in; only targets without one get AOTriton's release images.
+#  * torch & co. are ordinary wheels, linked against the shared core and
+#    libraries wheels, so one store path serves every GPU set. Their per-GPU
+#    kernel packs (amd-torch-device-*) are separate packages the venv merges
+#    in; the set-specific bits (where those packs are, AOTriton's images) come
+#    from the placeholder's _therock_torch module (see therock_torch.py).
+#    AOTriton's images come from AMD's family wheels (amd-torch-device-gfx115x,
+#    ...) that torch[device-gfxNNNN] pulls in, else AOTriton's release images.
 {
   pkgs,
   lib,
@@ -76,32 +78,38 @@ let
     });
   dist = n: "${n}-${version}.dist-info";
 
-  # AMD ships AOTriton images in per-family wheels (amd-torch-device-gfx115x,
-  # -gfx12-0, ...): any torch device package that isn't a target itself.
-  hasFamilyWheel = lib.any (p: !(lib.elem p (map (t: "amd-torch-device-${t}") gfx))) (
-    matching "amd-torch-device-"
-  );
-  fallbackImages = lib.optionals (!hasFamilyWheel) rock.aotriton;
+  # AOTriton finds its images next to the real libaotriton file, so each set
+  # gets a copy (32 MB) beside links to its image families: those in AMD's
+  # family wheels (amd-torch-device-gfx115x, -gfx12-0, ...) in this set's
+  # closure, else (amd-torch-device-gfxNNNN depended on directly) AOTriton's
+  # release images.
+  isTarget = n: builtins.match "amd-torch-device-gfx[0-9a-f]+" n != null;
+  familyWheels = lib.filter (n: lib.hasPrefix "amd-torch-device-" n && !isTarget n) devicePackages;
+  torchSet = lib.optionalString (prev ? torch) ''
+    cp ${./therock_torch.py} $out/${sp}/_therock_torch.py
+    a=$out/${sp}/_therock_aotriton
+    mkdir -p $a/aotriton.images
+    for f in ${final.torch}/${sp}/torch/lib/libaotriton_v2.so.*; do
+      [ -L "$f" ] || cp "$f" $a/
+    done
+    ${
+      if familyWheels != [ ] then
+        lib.concatMapStrings (
+          p: "ln -s ${final.${p}}/${sp}/torch/lib/aotriton.images/* $a/aotriton.images/\n"
+        ) familyWheels
+      else
+        lib.concatMapStrings (i: "ln -s ${i}/aotriton.images/* $a/aotriton.images/\n") rock.aotriton
+    }
+  '';
 
-  # host package -> per-GPU packages whose payload it carries
-  matching = prefix: lib.filter (lib.hasPrefix prefix) devicePackages;
-  carriedBy = {
-    torch = matching "amd-torch-device-";
-    torchvision = matching "amd-torchvision-device-";
-  };
-  carry = host: old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.unzip ];
-    postInstall =
-      (old.postInstall or "")
-      + lib.concatMapStrings (
-        p: "unzip -qo ${final.${p}.src} -x '*.dist-info/*' -d $out/${sp}\n"
-      ) carriedBy.${host};
-  };
-  metadataOnly = old: {
-    postInstall = (old.postInstall or "") + ''
-      find "$out/${sp}" -mindepth 1 -maxdepth 1 ! -name '*.dist-info' -exec rm -rf {} +
-    '';
-  };
+  # ROCm's libraries in the per-wheel store paths every GPU set shares, so
+  # torch & co. link the same paths whatever the set (their kernels are
+  # found through the set's runtime, which rocm_sdk preloads from the venv).
+  rocmLibs = [
+    "${rock.core}/_rocm_sdk_core/lib"
+    "${rock.core}/_rocm_sdk_core/lib/rocm_sysdeps/lib"
+    "${rock.libraries}/_rocm_sdk_libraries/lib"
+  ];
 
   linkAgainst = dirs: old: {
     dontStrip = true;
@@ -109,7 +117,12 @@ let
   };
 in
 {
-  rocm-sdk-core = placeholder "rocm-sdk-core" "rocm_sdk_core _rocm_sdk_core ${dist "rocm_sdk_core"} _therock_host.py therock.pth";
+  rocm-sdk-core =
+    (placeholder "rocm-sdk-core" "rocm_sdk_core _rocm_sdk_core ${dist "rocm_sdk_core"} _therock_host.py therock.pth")
+    .overrideAttrs
+      (old: {
+        installPhase = old.installPhase + torchSet;
+      });
   rocm-sdk-libraries = placeholder "rocm-sdk-libraries" "rocm_sdk_libraries _rocm_sdk_libraries ${dist "rocm_sdk_libraries"}";
 
   # `rocm_sdk` module; sdist-only. uv doesn't lock build systems, hence setuptools.
@@ -118,28 +131,36 @@ in
       (old.nativeBuildInputs or [ ]) ++ final.resolveBuildSystem { setuptools = [ ]; };
   });
 
+  # One torch for every GPU set (its per-GPU kernels are separate packages);
+  # _rocm_init, which runs before torch loads its libraries, picks up the
+  # venv's set from _therock_torch.
   torch = prev.torch.overrideAttrs (
     old:
-    let
-      carried = carry "torch" old;
-    in
-    linkAgainst [ "${runtime}/lib" ] old
-    // carried
+    linkAgainst rocmLibs old
     // {
-      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.xz ]; # aotriton
-      postInstall = carried.postInstall + ''
-        images=$out/${sp}/torch/lib/aotriton.images
-        mkdir -p $images
-        ${lib.concatMapStrings (a: ''
-          for d in ${a}/aotriton.images/*; do [ -e "$images/''${d##*/}" ] || ln -s "$d" $images/; done
-        '') fallbackImages}
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.xz ]; # libaotriton
+      postInstall = (old.postInstall or "") + ''
+        cat >> $out/${sp}/torch/_rocm_init.py <<'EOF'
+
+
+        # therock-nixos: this venv's GPU set (kernel packs, AOTriton images).
+        _amd_initialize = initialize
+
+
+        def initialize():
+            _amd_initialize()
+            try:
+                import _therock_torch  # noqa: F401
+            except ImportError:
+                pass
+        EOF
       '';
     }
   );
 
   triton = prev.triton.overrideAttrs (
     old:
-    linkAgainst [ "${runtime}/lib" "${runtime}/lib/rocm_sysdeps/lib" ] old
+    linkAgainst rocmLibs old
     // {
       buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zlib ]; # libproton: comgr, sysdeps
       # Its launcher stub includes HIP (-> glibc features.h) before Python.h, so
@@ -212,10 +233,7 @@ in
 }
 // lib.optionalAttrs (prev ? flydsl) {
   # aiter's MLIR DSL; its JIT runtime links HIP.
-  flydsl = prev.flydsl.overrideAttrs (linkAgainst [
-    "${runtime}/lib"
-    "${runtime}/lib/rocm_sysdeps/lib"
-  ]);
+  flydsl = prev.flydsl.overrideAttrs (linkAgainst rocmLibs);
 }
 // lib.optionalAttrs (prev ? flash-attn) {
   # flash-attn (git) with its Triton backend, on the aiter above.
@@ -241,13 +259,9 @@ in
 }
 // lib.optionalAttrs (prev ? torchvision) {
   torchvision = prev.torchvision.overrideAttrs (
-    old:
-    linkAgainst [ "${runtime}/lib" "${final.torch}/${sp}/torch/lib" ] old // carry "torchvision" old
+    old: linkAgainst (rocmLibs ++ [ "${final.torch}/${sp}/torch/lib" ]) old
   );
 }
 // lib.genAttrs (lib.filter (lib.hasPrefix "rocm-sdk-device-") devicePackages) (
   name: placeholder name (dist (lib.replaceStrings [ "-" ] [ "_" ] name))
-)
-// lib.genAttrs (lib.concatLists (lib.attrValues carriedBy)) (
-  name: prev.${name}.overrideAttrs metadataOnly
 )
