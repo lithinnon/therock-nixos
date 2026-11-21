@@ -80,7 +80,9 @@ environment.systemPackages = [ (config.therock.rock.relink pkgs.some-rocm-app) ]
 ```
 
 Puts `rocminfo`, `amd-smi` and `rocm_agent_enumerator` on `PATH`
-(`therock.binaries`). ROCm is built with therock-nixos' own pin
+(`therock.binaries`). Writes the GPU set and release to `/etc/therock/targets`
+and `/etc/therock/version`, where projects' launchers read them, so projects
+on the machine use exactly the system's set (and share its store paths). ROCm is built with therock-nixos' own pin
 (`therock.pkgs`), so the system shares store paths with projects on the same
 therock-nixos revision whatever nixpkgs the system uses.
 

@@ -83,7 +83,11 @@
                   {
                     therock = {
                       enable = true;
-                      gfx = [ "gfx1151" ];
+                      gfx = lib.mkDefault [
+                        "gfx1151"
+                        "gfx1100"
+                        "gfx1151"
+                      ]; # canonicalized
                       miopenFindMode = "FAST";
                     };
                     boot.loader.grub.enable = false;
@@ -131,6 +135,10 @@
                 for b in hipcc amdclang++ therock; do test ! -e ${path}/bin/$b; done
                 ${lib.optionalString (sys.config.environment.variables ? ROCM_PATH) "false"}
                 test "${sys.config.environment.variables.MIOPEN_FIND_MODE}" = FAST
+                test "${sys.config.environment.etc."therock/targets".text}" = "gfx1100 gfx1151
+                "
+                test "${sys.config.environment.etc."therock/version".text}" = "10.2.0
+                "
                 test -e ${exclusiveCheckOf sys} # passes: only TheRock
                 touch $out
               '';

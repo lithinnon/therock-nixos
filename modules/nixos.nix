@@ -161,6 +161,11 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ tools ];
+    # This machine's GPU set and release, for projects' launchers (`nix
+    # develop` of a therock project): they pick exactly these, so they share
+    # the system's store paths. Canonical: sorted, space-separated.
+    environment.etc."therock/targets".text = "${toString rock.gfx}\n";
+    environment.etc."therock/version".text = "${cfg.version}\n";
     environment.variables = lib.optionalAttrs (cfg.miopenFindMode != null) {
       MIOPEN_FIND_MODE = cfg.miopenFindMode;
     };
