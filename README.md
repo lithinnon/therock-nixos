@@ -45,8 +45,11 @@ store:  rocm-sdk-core │ rocm-sdk-libraries │ rocm-sdk-device-gfx1151 │ roc
 
 `rock` is `therock.lib.mkTheRock { pkgs; gfx; version? }` (or, on NixOS,
 `config.therock.rock`): `runtime`, `sdk`, `hook`, `relink`, `aotriton` and the
-per-wheel store paths. Several targets can share one prefix
-(`gfx = [ "gfx1100" "gfx1151" ]`). Everything is built with therock-nixos'
+per-wheel store paths. Several targets share one prefix
+(`gfx = [ "gfx1100" "gfx1151" ]`, a machine with mixed GPUs): the set is
+canonical (sorted, deduplicated, named `gfx1100+gfx1151`), so the system, dev
+shells and venvs given the same GPUs in any order get the same store paths.
+Adding a GPU to a set costs only its kernel wheels; everything else is shared. Everything is built with therock-nixos'
 nixpkgs pin, so projects (with `nixpkgs.follows = "therock/nixpkgs"`) and the
 system get the same store paths: one ROCm on disk.
 

@@ -20,7 +20,7 @@
 }:
 
 let
-  targets = lib.concatStringsSep "-" gfx;
+  targets = lib.concatStringsSep "+" gfx; # canonical (mkTheRock): gfx1100+gfx1151
   roots = [
     "${core}/_rocm_sdk_core"
     "${libraries}/_rocm_sdk_libraries"

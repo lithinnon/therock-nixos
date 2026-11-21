@@ -51,7 +51,7 @@ let
   linker = pkgs.callPackage ../pkgs/therock-cli { } { inherit runtime; };
 
   # What `therock link` installs, built once per (version, gfx, python).
-  site = pkgs.runCommand "therock-site-${version}-${lib.concatStringsSep "-" gfx}" { } ''
+  site = pkgs.runCommand "therock-site-${version}-${lib.concatStringsSep "+" gfx}" { } ''
     mkdir -p $out/${sp}
     ${linker}/bin/therock link $out > /dev/null
   '';

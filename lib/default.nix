@@ -30,9 +30,36 @@ let
       x
     else
       null;
+
+  # A set of GPU targets in its one canonical form: deduplicated and sorted,
+  # so every consumer (system, dev shells, venvs) given the same GPUs builds
+  # the same store paths whatever order or repetition they were listed in.
+  canonicalGfx =
+    gfx:
+    let
+      targets = lib.toList gfx;
+      bad = lib.filter (t: !(builtins.isString t && builtins.match "gfx[0-9a-f]+" t != null)) targets;
+    in
+    if targets == [ ] then
+      throw "therock-nixos: no GPU target given (gfx = [ \"gfx1151\" ]; see `rocminfo | grep gfx`)"
+    else if bad != [ ] then
+      throw "therock-nixos: not a GPU target: ${
+        lib.concatMapStringsSep ", " builtins.toJSON bad
+      } (expected e.g. \"gfx1151\")"
+    else
+      lib.sort lib.lessThan (lib.unique targets);
+
+  # "gfx1100+gfx1151": a canonical set as one name (store paths, outputs).
+  gfxSetName = gfx: lib.concatStringsSep "+" (canonicalGfx gfx);
 in
 {
-  inherit versions defaultVersion aotritonFamily;
+  inherit
+    versions
+    defaultVersion
+    aotritonFamily
+    canonicalGfx
+    gfxSetName
+    ;
 
   mkTheRock =
     {
@@ -44,7 +71,7 @@ in
       m =
         versions.${version}
           or (throw "therock-nixos: no manifest for TheRock ${version} (have: ${toString (builtins.attrNames versions)})");
-      targets = lib.toList gfx;
+      targets = canonicalGfx gfx;
       wheel = pkgs.callPackage ../pkgs/wheel.nix { };
       mkWheel =
         pname: hash: extra:
@@ -135,6 +162,7 @@ in
       sdk = mkPrefix true;
 
       rock = {
+        gfx = targets; # canonical
         inherit
           core
           libraries

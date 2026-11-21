@@ -36,10 +36,14 @@ let
   '';
 in
 {
-  inherit (targets) ready venvSpec;
+  inherit (targets) ready;
+  venvSpec = gfx: targets.venvSpec (therockLib.canonicalGfx gfx);
 
   overlay =
-    gfx:
+    gfx':
+    let
+      gfx = therockLib.canonicalGfx gfx';
+    in
     import ./overrides.nix {
       inherit pkgs lib gfx;
       inherit (therockLib) mkTheRock;
@@ -57,20 +61,25 @@ in
           f targets.ready;
     };
 
-  shell = gfx: {
-    packages = [
-      pkgs.stdenv.cc # triton / torch.compile build a C launcher at runtime
-    ];
-    env = { };
-    # Silent unless this machine has a GPU the shell has no kernels for.
-    shellHook = ''
-      for gfx in $(${detectGpus}); do
-        case " ${toString gfx} " in *" $gfx "*) ;; *)
-          echo "therock: no kernels for your $gfx here; run \`nix run .#lock\`, then \`nix develop .#$gfx\`" >&2 ;;
-        esac
-      done
-    '';
-  };
+  shell =
+    gfx':
+    let
+      gfx = therockLib.canonicalGfx gfx';
+    in
+    {
+      packages = [
+        pkgs.stdenv.cc # triton / torch.compile build a C launcher at runtime
+      ];
+      env = { };
+      # Silent unless this machine has a GPU the shell has no kernels for.
+      shellHook = ''
+        for gfx in $(${detectGpus}); do
+          case " ${toString gfx} " in *" $gfx "*) ;; *)
+            echo "therock: no kernels for your $gfx here; run \`nix run .#lock\`, then \`nix develop .#$gfx\`" >&2 ;;
+          esac
+        done
+      '';
+    };
 
   lockApp = {
     type = "app";

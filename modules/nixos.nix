@@ -85,7 +85,8 @@ in
       type = types.nonEmptyListOf (types.strMatching "gfx[0-9a-f]+");
       example = [ "gfx1151" ];
       description = ''
-        GPU targets (`rocminfo | grep gfx`). Several targets share one prefix.
+        GPU targets (`rocminfo | grep gfx`). Several targets share one prefix;
+        order and repeats don't matter (the set is canonicalized).
         A target must be hashed in versions/<version>.nix (`nix run .#update`).
       '';
     };

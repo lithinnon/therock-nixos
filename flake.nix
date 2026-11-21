@@ -167,6 +167,72 @@
                   touch $out
                 '';
 
+            # A GPU set has one canonical form: order and repeats don't change
+            # store paths, so the system, shells and venvs share one prefix.
+            canonical-gfx =
+              let
+                mk = gfx: therockLib.mkTheRock { inherit pkgs gfx; };
+                fails = gfx: !(builtins.tryEval (mk gfx).runtime.outPath).success;
+                ab = mk [
+                  "gfx1100"
+                  "gfx1151"
+                ];
+                ba = mk [
+                  "gfx1151"
+                  "gfx1100"
+                  "gfx1151"
+                ];
+              in
+              assert ab.runtime.outPath == ba.runtime.outPath;
+              assert ab.sdk.outPath == ba.sdk.outPath;
+              assert ab.hook.outPath == ba.hook.outPath;
+              assert
+                ba.gfx == [
+                  "gfx1100"
+                  "gfx1151"
+                ];
+              assert lib.hasSuffix "-10.2.0-gfx1100+gfx1151" ab.runtime.name;
+              assert (mk "gfx1151").runtime.outPath == (mk [ "gfx1151" ]).runtime.outPath;
+              assert
+                therockLib.gfxSetName [
+                  "gfx1151"
+                  "gfx1100"
+                ] == "gfx1100+gfx1151";
+              assert fails [ ];
+              assert fails [ "rdna3" ];
+              assert fails "GFX1151";
+              pkgs.runCommand "therock-canonical-gfx" { } "touch $out";
+
+            # Prefixes merge GPU wheels by path: no two of them (nor core or
+            # libraries) may ship the same file, or one GPU's would be lost.
+            # Only the empty Python package markers (__init__.py) repeat.
+            device-collisions =
+              let
+                all = therockLib.mkTheRock {
+                  inherit pkgs;
+                  gfx = hashed;
+                };
+              in
+              pkgs.runCommand "therock-device-collisions" { nativeBuildInputs = [ pkgs.python3 ]; } ''
+                python3 - ${all.core}/_rocm_sdk_core ${all.libraries}/_rocm_sdk_libraries \
+                  ${
+                    lib.concatMapStringsSep " " (d: "${d}/_rocm_sdk_libraries") (lib.attrValues all.devices)
+                  } <<'EOF'
+                import os, sys
+                seen, bad = {}, []
+                for root in sys.argv[1:]:
+                    for d, dirs, files in os.walk(root):
+                        for n in files + [x for x in dirs if os.path.islink(os.path.join(d, x))]:
+                            rel = os.path.relpath(os.path.join(d, n), root)
+                            if rel != "__init__.py" and rel in seen:
+                                bad.append(f"{rel}: {seen[rel]} and {root}")
+                            seen.setdefault(rel, root)
+                print(f"{len(seen)} paths, {len(sys.argv) - 1} wheels")
+                sys.exit("colliding paths:\n" + "\n".join(bad[:20]) if bad else 0)
+                EOF
+                touch $out
+              '';
+
             # templates/hip builds against the SDK and links only the runtime.
             hip-template = pkgs.stdenv.mkDerivation {
               name = "therock-hip-template";
