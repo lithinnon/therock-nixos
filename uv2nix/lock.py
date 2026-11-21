@@ -98,7 +98,10 @@ def main() -> None:
     named = [a for a in args if re.fullmatch(r"gfx[0-9a-f]+", a)]
     uv_args = [a for a in args if a not in named]
 
-    root = Path(run("git", "rev-parse", "--show-toplevel"))
+    # the project: like uv, the nearest directory with a pyproject.toml
+    root = next((d for d in [Path.cwd(), *Path.cwd().parents] if (d / "pyproject.toml").exists()), None)
+    if root is None:
+        sys.exit("no pyproject.toml here or in a parent directory")
     lock_file = root / "uv.lock"
     before = Lock(lock_file.read_text()).ready() if lock_file.exists() else []
 

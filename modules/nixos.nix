@@ -7,7 +7,7 @@
 # no ROCM_PATH, no compiler, nothing for unlinked programs to find. Software
 # that uses the GPU is linked to therock-nixos in its own derivation or flake:
 #
-#   uv2nix projects     therock.lib.uv2nix (templates.default)
+#   Python projects     therock.lib.pytorchProject (`nix run therock#init`)
 #   HIP/C++ software    rock.hook in nativeBuildInputs (templates.hip)
 #   development         therock.lib.mkShell / devShells.<gfx>
 #   prebuilt packages   config.therock.rock.relink pkg (no recompiling)

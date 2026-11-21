@@ -37,7 +37,7 @@ store:  rocm-sdk-core │ rocm-sdk-libraries │ rocm-sdk-device-gfx1151 │ roc
 
 | | How a program gets ROCm |
 |---|---|
-| Python (torch, flash-attn) | uv2nix project: `nix flake init -t github:lithinnon/therock-nixos` |
+| Python (torch, flash-attn) | a plain uv project + `nix run github:lithinnon/therock-nixos#init` |
 | HIP/C++ from source | `rock.hook` in `nativeBuildInputs`: `nix flake init -t github:lithinnon/therock-nixos#hip` |
 | Prebuilt package on another ROCm | `rock.relink pkg`: moved onto TheRock without recompiling |
 | Development | `therock.lib.mkShell { gfx; ... }`, or `nix develop github:lithinnon/therock-nixos#gfx1151` |
@@ -49,21 +49,24 @@ per-wheel store paths. Several targets share one prefix
 (`gfx = [ "gfx1100" "gfx1151" ]`, a machine with mixed GPUs): the set is
 canonical (sorted, deduplicated, named `gfx1100+gfx1151`), so the system, dev
 shells and venvs given the same GPUs in any order get the same store paths.
-Adding a GPU to a set costs only its kernel wheels; everything else is shared. Everything is built with therock-nixos'
-nixpkgs pin, so projects (with `nixpkgs.follows = "therock/nixpkgs"`) and the
-system get the same store paths: one ROCm on disk.
+Adding a GPU to a set costs only its kernel wheels; everything else is
+shared. Everything is built with therock-nixos' nixpkgs pin, so projects and
+the system get the same store paths: one ROCm on disk.
 
 | Output | What |
 |---|---|
 | `.#runtime-gfx1151` | ROCm runtime + libraries + kernels (4.3 GB closure): what programs link |
 | `.#sdk-gfx1151` | runtime + devel (7.4 GB): `hipcc`, headers, CMake packages |
-| `devShells.gfx1151` | the SDK with `GPU_TARGETS` & co. set |
+| `devShells.gfx1151` | the SDK with `GPU_TARGETS` & co. set; also families (`.#rdna3`, `.#rdna35`, `.#rdna4`, `.#cdna`, …) and `.#all` |
 | `nix run .#gpu-check [gfx]` | verify on this GPU: rocminfo, amd-smi, HIP kernel, rocBLAS vs CPU |
+| `nix run .#init` | make the uv project in the current directory use ROCm torch |
 | `nix run .#update -- VERSION [gfx...]` | hash a release/target into `versions/VERSION.nix` |
+| `nix run .#stack-lock` | re-lock and hash the ROCm torch stack (`uv2nix/stack`) for every target |
 
-Hashed targets for 10.2.0: gfx1100, gfx1151. Published by AMD: gfx90a/908/942/950,
-gfx101x, gfx103x, gfx110x, gfx115x, gfx120x, gfx1250. Adding one downloads only
-its device wheel (~0.5 GB) and AOTriton images; core/libraries/devel are shared.
+Every target AMD publishes for 10.2.0 is hashed: gfx908/90a/942/950,
+gfx1010–1012, gfx1030–1036, gfx1100–1103, gfx1150–1153, gfx1200/1201, gfx1250.
+Building for one downloads only its kernel wheels (~0.5 GB, plus torch's) and
+AOTriton images; core/libraries/devel are shared.
 
 **NixOS:**
 
@@ -73,7 +76,7 @@ inputs.therock.url = "github:lithinnon/therock-nixos";  # don't make it follow y
 therock = {
   enable = true;
   gfx = [ "gfx1151" ];
-  # miopenFindMode = "FAST";  # system-wide; uv2nix venvs do it after a suspend
+  # miopenFindMode = "FAST";  # system-wide; Python venvs do it after a suspend
   # exclusive = false;        # allow other ROCms in the system
 };
 environment.systemPackages = [ (config.therock.rock.relink pkgs.some-rocm-app) ];
@@ -82,7 +85,8 @@ environment.systemPackages = [ (config.therock.rock.relink pkgs.some-rocm-app) ]
 Puts `rocminfo`, `amd-smi` and `rocm_agent_enumerator` on `PATH`
 (`therock.binaries`). Writes the GPU set and release to `/etc/therock/targets`
 and `/etc/therock/version`, where projects' launchers read them, so projects
-on the machine use exactly the system's set (and share its store paths). ROCm is built with therock-nixos' own pin
+on the machine use exactly the system's set (and share its store paths).
+ROCm is built with therock-nixos' own pin
 (`therock.pkgs`), so the system shares store paths with projects on the same
 therock-nixos revision whatever nixpkgs the system uses.
 
@@ -106,29 +110,52 @@ SDK to the runtime, so the result needs the 4.3 GB runtime, not the SDK
 without any environment; `amdclang++` needs `--rocm-path=$SDK` for library
 headers.
 
-**uv2nix projects:**
+**Python projects** stay ordinary uv projects, like CUDA ones: `pyproject.toml`
+lists plain `torch`/`torchvision`, `uv.lock` is a PyPI lock, and nothing in
+the repo names a GPU. In the project (new or existing):
 
 ```sh
-nix flake init -t github:lithinnon/therock-nixos
-nix run .#lock      # uv lock + hashes for this machine's GPU
-nix develop         # python, torch on the GPU, uv (`uv run` uses the Nix venv)
+nix run github:lithinnon/therock-nixos#init   # flake.nix, .envrc, .gitignore, uv lock
+nix develop      # Python with ROCm torch for this machine's GPUs, uv, a C compiler
 ```
 
-`therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; }` gives an overlay
-(`overlay gfx`), `venvSpec`, `perTarget`, `shell` and `lockApp`. AMD's
-`rocm-sdk-*` wheels become placeholders: their metadata plus symlinks into the
-runtime, and a startup hook (`therock.pth`) providing libstdc++ & co., libc
-headers for MIOpen's JIT, and `MIOPEN_FIND_MODE=FAST` after a suspend (GPU
-timers break, [ROCm/MIOpen#3964](https://github.com/ROCm/MIOpen/issues/3964)).
-`nix run .#lock` never downloads or hashes them (~4 GB less). torch, torchvision
-and triton are also one store path for every GPU set and every project on the
-same lock: their per-GPU kernel packs are separate packages the venv merges
-in, and the set-specific part (where those packs are, a 32 MB copy of
-libaotriton beside the set's AOTriton images, since both loaders resolve real
-paths) comes with the venv's placeholder. The shell has a
-C compiler for Triton and `torch.compile`. Depend on `torch[device-gfxNNNN]`
-and `torchvision[device-gfxNNNN]`: their GPU kernels (and AOTriton's) are in
-those extras.
+The whole `flake.nix`:
+
+```nix
+{
+  inputs.therock.url = "github:lithinnon/therock-nixos";
+  outputs = { therock, ... }: therock.lib.pytorchProject { src = ./.; };
+}
+```
+
+When building, torch, torchvision and triton are swapped for AMD's ROCm builds
+from therock-nixos' own hashed lock (`uv2nix/stack`), with the kernels of a
+GPU set; the `nvidia-*` packages PyPI's torch pulls in drop out. The GPU set
+is picked when a command runs: `THEROCK_GFX=gfx1100,gfx1151`, else
+`/etc/therock/targets` (the NixOS module's), else every AMD GPU in `/sys`.
+
+| | |
+|---|---|
+| `nix develop` | launcher: enters this machine's set (`nix develop .#shells.<set>`) |
+| `cd` (direnv) | the same via `.envrc` |
+| `nix run .#dev -- CMD` | CMD in that shell (`nix develop -c` can't re-enter) |
+| `nix build .#gfx1151` | a venv; also `.#rdna3` & co., `.#all`, `.#venvs.gfx1100+gfx1151` |
+| `nix develop .#gfx1100` | a given target (other machines, CI) |
+| `nix run .#set` | the set this machine uses |
+| `uv lock`, `uv add` | as usual in the shell; `uv run` uses the Nix venv |
+
+`pytorchProject { src; overlays?; deps?; packages?; shellHook?; }` also returns `lib.venv`/`lib.shell`
+(functions of a GPU set) for custom outputs. Venvs are mostly symlinks: torch,
+torchvision and triton are one store path for every GPU set and project, and
+their per-GPU kernel packs separate packages. The set-specific part comes with
+AMD's `rocm-sdk-*` placeholders: their metadata plus symlinks into the runtime,
+where torch's kernel packs are (`ROCM_KPACK_PATH`), a 32 MB copy of libaotriton
+beside the set's AOTriton images (both loaders resolve real paths), and a
+startup hook (`therock.pth`) providing libstdc++ & co., libc headers for
+MIOpen's JIT, and `MIOPEN_FIND_MODE=FAST` after a suspend (GPU timers break,
+[ROCm/MIOpen#3964](https://github.com/ROCm/MIOpen/issues/3964)). A locked torch
+other than therock's (2.15) gives a warning. `therock.lib.uv2nix` is the
+lower-level overlay, for uv2nix flakes of your own.
 
 **flash-attn** (Triton backend through aiter; both from git, since the PyPI
 releases are stale and don't work with Triton 3.9). Add to `pyproject.toml`:
@@ -138,13 +165,6 @@ dependencies = [
   "flash-attn @ git+https://github.com/Dao-AILab/flash-attention@68bd095cdd338c5171bccb9c200529f3620b85c9",
   "amd-aiter @ git+https://github.com/ROCm/aiter@f0966b0aed0b38198e2e1ca1cff8cca343bbcb7e",
 ]
-
-[tool.uv]
-no-build-isolation-package = ["flash-attn"]  # its setup.py imports torch
-
-[tool.uv.extra-build-variables]
-flash-attn = { FLASH_ATTENTION_TRITON_AMD_ENABLE = "TRUE", FLASH_ATTENTION_USE_SYSTEM_AITER = "TRUE" }
-amd-aiter = { PREBUILD_KERNELS = "0", ENABLE_CK = "0" }
 
 # Static metadata, so `uv lock` builds neither (both need torch and ROCm for it).
 [[tool.uv.dependency-metadata]]
@@ -158,7 +178,7 @@ version = "0.1.23.dev93+gf0966b0ae"
 requires-dist = ["pybind11>=3.0.1", "ninja", "pandas", "einops", "psutil", "packaging", "flydsl==0.3.4.1", "pyyaml"]
 ```
 
-The overlay builds both, including aiter's `module_aiter_core` (otherwise
+The overlay builds both (Triton backend, no CK), including aiter's `module_aiter_core` (otherwise
 JIT-compiled on first import, ~15 s, needing the full SDK and ninja). On
 gfx1151 it runs at ~15 TFLOP/s (bf16, causal, fwd), 18–24× torch's MATH
 attention; torch's own SDPA (AOTriton) is as fast for plain attention,
@@ -166,11 +186,11 @@ flash-attn adds sliding windows, varlen and paged KV.
 
 ## Fixes for upstream gaps
 
-- **AOTriton kernel images.** torch loads them from `torch/lib/aotriton.images`,
-  shipped in AMD's per-family wheels (`amd-torch-device-gfx115x`, …) that only
-  `torch[device-gfxNNNN]` pulls in. Depending on `amd-torch-device-gfxNNNN`
-  directly misses them and fused SDPA fails with `device kernel image is
-  invalid`; then AOTriton's release images are linked in as a fallback.
+- **AOTriton kernel images.** torch loads them next to libaotriton; AMD ships
+  them in per-family wheels (`amd-torch-device-gfx115x`, `-gfx110x`,
+  `-gfx12-0`) for some targets only. The others (gfx942, gfx950, gfx90a,
+  gfx1250) get AOTriton's release images; without either, fused SDPA fails
+  with `device kernel image is invalid`.
 - **No `/usr`.** `rocm.cfg` gets glibc/gcc paths, and libstdc++ sits in the
   bundled sysdeps dir.
 - **Wheels can't hold symlinks.** Unversioned `.so` dev names are added to core,
@@ -182,11 +202,13 @@ flash-attn adds sliding windows, varlen and paged KV.
 
 Verified on gfx1151 (Strix Halo) with TheRock 10.2.0 and torch 2.15.0:
 `hipcc` and the HIP template (CMake, rocBLAS) build and run, `rocminfo` and
-`amd-smi` work, in uv2nix venvs torch matmul, MIOpen conv, SDPA (AOTriton),
-Triton, `torch.compile`, torchvision 0.29.2 and flash-attn work, and hipfire
+`amd-smi` work; in pytorchProject venvs from a plain PyPI lock (gfx1151,
+gfx1100+gfx1151, gfx942+gfx1151) torch matmul, MIOpen conv, SDPA (AOTriton),
+Triton, `torch.compile`, torchvision 0.29.2, lightning and flash-attn work,
+as do the launcher, `nix run .#dev` and direnv; hipfire
 (built upstream on nixpkgs' ROCm 7.2) runs relinked onto TheRock.
-`nix flake check` builds HIP programs in the sandbox and tests relinking and
-the one-ROCm check.
+`nix flake check` builds HIP programs in the sandbox and tests relinking, the
+one-ROCm check and the torch swap.
 
 Not included in the wheels compared to AMD's tarball: Composable Kernel C++
 headers and instance libraries, hipTensor, rocALUTION, RDC, and the

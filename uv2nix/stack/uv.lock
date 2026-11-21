@@ -1,0 +1,1425 @@
+version = 1
+revision = 5
+requires-python = "==3.14.*"
+resolution-markers = [
+    "platform_machine == 'x86_64' and sys_platform == 'linux'",
+]
+supported-markers = [
+    "platform_machine == 'x86_64' and sys_platform == 'linux'",
+]
+
+[[package]]
+name = "amd-torch-device-gfx1010"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1010" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1010/amd_torch_device_gfx1010-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:2d697d98d7b680e225c51cce630eca4735ca2b854586077d7f744fb9035d44be" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1011"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1011" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1011/amd_torch_device_gfx1011-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:d4eef946a6e9d434054eac602f7b3d334e7e41ebbfe9a29ecb059090c7112481" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1012"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1012" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1012/amd_torch_device_gfx1012-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:ca963bade96747e75ee0f904d66089a42b9aec8a7abf222a3431d68c0d6dd7dd" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1030"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1030" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1030/amd_torch_device_gfx1030-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:cef44868b9b3c18bd5b270b1e3266f6991ae5a30772d9823d2b6c602b13f3fd2" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1031"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1031" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1031/amd_torch_device_gfx1031-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:73b9b8e9f58c9506b635dcb4f721ea9c793b888934b0b72d4fdc03dc65ca1dae" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1032"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1032" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1032/amd_torch_device_gfx1032-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:7083f2e3ebe01d9e6ad3c8df2f2018a95019ce2102e4e9da38f963969595ed78" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1033"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1033" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1033/amd_torch_device_gfx1033-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:99eb813c8f1e254aec7632355fa05b6b27eedd8ce0c8b8976f45e004e45bfab3" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1034"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1034" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1034/amd_torch_device_gfx1034-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:e286574edf8c4c3855f41f33629121be9a6a18fec11572f12e2513cfdc7368d1" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1035"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1035" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1035/amd_torch_device_gfx1035-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:27b2fb775b4b9428e64476a058f2b24ab664ac258f662ed978b77e92c53745ef" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1036"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1036" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1036/amd_torch_device_gfx1036-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:25bce18d180089c43db1df577ecd7572224f7e4d6bbe59f693bdcba931741a6a" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1100"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1100" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1100/amd_torch_device_gfx1100-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:1f742d20b615993bc765f62a9cab3a71ae4ff430f34b9fb50187b8f5ff8583f4" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1101"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1101" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1101/amd_torch_device_gfx1101-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:593ea74909ed05f62548fe1c964dea762b345c16b4ce17a6e27f076c8a732d1c" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1102"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1102" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1102/amd_torch_device_gfx1102-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:2b16b6d19f454ee4115b17852b105408db8ba4131b0adcd99d19d14187d015e4" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1103"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1103" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1103/amd_torch_device_gfx1103-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:c30b08dc2abf30732773523ebbc6b163925e71bdce7f298e9da08761793d1575" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx110x"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx110x/amd_torch_device_gfx110x-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:99a62f032bb141e06be3e843f67cd239574b56f4bc771cc94044ad6338c7106f" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1150"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1150" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1150/amd_torch_device_gfx1150-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:657005dce3fe956a8c319ae7d90638bee19f2f4f75521abe5fc816736b0f2850" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1151"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1151" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1151/amd_torch_device_gfx1151-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:c2473cc843d7010efc370f2987f338b24b0b2a5842a5aa009197592b55e60b97" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1152"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1152" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1152/amd_torch_device_gfx1152-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:22947da049676eb1d224ef8ec536d2e9d4801f8f5d79433271ca78e3e6eb5d0f" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1153"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1153" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1153/amd_torch_device_gfx1153-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:e54822d25129e5fe0d3b5be3a4decdcdbbfda1e7a7ca40bea951102c3af691a5" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx115x"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx115x/amd_torch_device_gfx115x-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:30bba4b0a1543b7c37f9623e3f8b4eac99f51f31e775491f1dae8c16f86ad745" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx12-0"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx12-0/amd_torch_device_gfx12_0-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:dbaa32b3b856989459c23d384425fa1a3e80603d0045150f7a730650a91ce0a1" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1200"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1200" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1200/amd_torch_device_gfx1200-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:2207b58b985b70c7c3af69100a2fb63087bd05ecb25ec0f9bd3974c3f8843821" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1201"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1201" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1201/amd_torch_device_gfx1201-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:6c43b6476710c17a6d87c99f90eab827b323e62bd72a2f9c3a77a05fd79fd6b8" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx1250"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1250" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx1250/amd_torch_device_gfx1250-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:b77061d57f608ee57417929ab1f6017774b6536404d05ac4a51f85568d6429f9" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx908"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx908" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx908/amd_torch_device_gfx908-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:beb32d6d6e70453420df97156c8e8733f5a297f7c1ff85fc1afd054fe78efae9" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx90a"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx90a" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx90a/amd_torch_device_gfx90a-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:a8032c4f184ab89a8a5e44b40db5d3639153ba1ef3ecc8352d73111579583d47" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx942"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx942" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx942/amd_torch_device_gfx942-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:5880b5cf297bacd4a8ff81acf89d13f5e0a99138c3b0ccd3cdd7e066c028ff86" },
+]
+
+[[package]]
+name = "amd-torch-device-gfx950"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx950" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torch-device-gfx950/amd_torch_device_gfx950-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:d01750c84ad7ae12139472041245c2cd966af7651ecedb8bf70166d7089fbabd" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1010"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1010" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1010/amd_torchvision_device_gfx1010-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:2ea6939103e5f07c59cfb9547dcbf90447de9fd92d65307e9ea13a58d9aa8b44" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1011"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1011" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1011/amd_torchvision_device_gfx1011-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:fe3ab9927a6c3ec49f7c30045de50a95e8a93ece87dc482218b9e221b9bfa966" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1012"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1012" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1012/amd_torchvision_device_gfx1012-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:51f9547ed9e06352563ba4f67ce693d390fb0cdd8c3b1814cd762239e1c9511e" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1030"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1030" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1030/amd_torchvision_device_gfx1030-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:c068a6eaa8f912345eb6f7f5447bdfefa352430c6a59d6f97c90b9484e59591d" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1031"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1031" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1031/amd_torchvision_device_gfx1031-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:5736135849823ff08d5a7678a21714faaba07431001a6f2a94d0fc667d7d4b0a" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1032"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1032" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1032/amd_torchvision_device_gfx1032-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:cbf54336d6acfd5378b8c5b48950918b6307265ae0d505dc2907a434362bf5a8" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1033"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1033" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1033/amd_torchvision_device_gfx1033-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:bebb733fc2f1cdf5584a0064df7ac8e57ad58fc3a8d2caaca8e6e1c1e1bb6bab" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1034"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1034" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1034/amd_torchvision_device_gfx1034-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:4b9211fd16c8d4d6be1ece251c28addd255d3a1e8f6597d275c5df653bba8103" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1035"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1035" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1035/amd_torchvision_device_gfx1035-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:0ea5a79c6f9e122aeedf0cfefa4dcb72e254222c2607245ffdf59b14acaf7912" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1036"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1036" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1036/amd_torchvision_device_gfx1036-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:98285026d79d63f5c6babcf8a577fdf6fa133a491b6b550e272d370a8d5e9c3a" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1100"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1100" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1100/amd_torchvision_device_gfx1100-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:119693cc3283c87c37fa145714b0f1f942c0e09699580d487f893f67aab2938e" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1101"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1101" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1101/amd_torchvision_device_gfx1101-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:04856916babe7d34109980c9093351fd3f2509bd16e419b520a9b8cdce201436" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1102"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1102" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1102/amd_torchvision_device_gfx1102-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:7093b85ebddc796be314b01efd046da4d4bd5aaf6ecf2428b220b851ebf3fb84" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1103"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1103" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1103/amd_torchvision_device_gfx1103-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:8d8ea062c757ce7ac26777926929a2d4ebfa0d8e26cda0e4bf32d2e116cec9f3" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1150"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1150" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1150/amd_torchvision_device_gfx1150-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:20f4f5c012869b47822c9f8c68312e224d63a4e66e98c07e8e217e92b723ff40" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1151"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1151" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1151/amd_torchvision_device_gfx1151-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:7fb0999a0fda1ec5196ea9c5350b4331a2db5efc30335b994dcf0b0a7cab9d40" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1152"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1152" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1152/amd_torchvision_device_gfx1152-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:4273d44c3d14bc184d8178d3964fa1be7b0984f4790559a6c29ff2d43314c88f" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1153"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1153" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1153/amd_torchvision_device_gfx1153-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:f59e15135cc7e7a6bfdde1eccf5236099fe77bebf14275df128ae12318be63b5" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1200"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1200" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1200/amd_torchvision_device_gfx1200-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:0fc1dc4c69f7a1e8ff186c45c455000b51310ce6e5e3d5e3550ba9fcd6907136" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1201"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1201" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1201/amd_torchvision_device_gfx1201-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:f76836c364d26cc514ae448a71b81f710eb50e5e53fc8ef1d8c43439e35bf433" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx1250"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx1250" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx1250/amd_torchvision_device_gfx1250-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:21d1aa9f1005cbc7e6c328a24dd6e2c553e6d27ee9c1c3a906e97c1481a4aba1" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx908"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx908" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx908/amd_torchvision_device_gfx908-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:9a8e7dfc9965c2857036fbf7b89b4988a651e91eb0fa4f52343ea7ba0f01e228" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx90a"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx90a" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx90a/amd_torchvision_device_gfx90a-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:17d175cf18668f7e3bd199df9fe5ef530061a212814f02ae93ba5112b9fbfe2f" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx942"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx942" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx942/amd_torchvision_device_gfx942-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:249466d6c343f3c8ca3d088f683ada39955fc5df1b64df023f4b4ae31d83b78c" },
+]
+
+[[package]]
+name = "amd-torchvision-device-gfx950"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-device-gfx950" },
+    { name = "torchvision" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/amd-torchvision-device-gfx950/amd_torchvision_device_gfx950-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:349e1061f51786cd6e2541e352ded8503ba90364da752065f2997047819898da" },
+]
+
+[[package]]
+name = "filelock"
+version = "4.0.8"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/filelock/filelock-4.0.8-py3-none-any.whl", hash = "sha256:325ff22f358c18443b1fcdfa0a7aa3faec4b500c2807c554719da4567b533d31" },
+]
+
+[[package]]
+name = "fsspec"
+version = "2026.9.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/fsspec/fsspec-2026.9.0-py3-none-any.whl", hash = "sha256:8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f" },
+]
+
+[[package]]
+name = "jinja2"
+version = "3.1.6"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "markupsafe" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/jinja2/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67" },
+]
+
+[[package]]
+name = "markupsafe"
+version = "3.0.3"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/markupsafe/markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:457a69a9577064c05a97c41f4e65148652db078a3a509039e64d3467b9e7ef97" },
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/markupsafe/markupsafe-3.0.3-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fed51ac40f757d41b7c48425901843666a6677e3e8eb0abcff09e4ba6e664f50" },
+]
+
+[[package]]
+name = "mpmath"
+version = "1.3.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/mpmath/mpmath-1.3.0-py3-none-any.whl", hash = "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c" },
+]
+
+[[package]]
+name = "networkx"
+version = "3.7"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/networkx/networkx-3.7-py3-none-any.whl", hash = "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0" },
+]
+
+[[package]]
+name = "numpy"
+version = "2.5.3"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/numpy/numpy-2.5.3-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b0521d0f4aebb6e06189451025fa17a913287b13c03d5fe05c017333b654ea5b" },
+]
+
+[[package]]
+name = "pillow"
+version = "12.3.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/pillow/pillow-12.3.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:251bf95b67017e27b13d82f5b326234ca62d70f9cf4c2b9032de2358a3b12c7b" },
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/pillow/pillow-12.3.0-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:bf16ba1b4d0b6b7c8e534936632270cf70eb00dbe09005bc345b2677b726855c" },
+]
+
+[[package]]
+name = "rocm"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-core" },
+]
+sdist = { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm/rocm-10.2.0.tar.gz", hash = "sha256:1ed367cf6fcaeb183ac2cb930605320c6486888881b7d523c998f521f328f027" }
+
+[package.optional-dependencies]
+libraries = [
+    { name = "rocm-sdk-libraries" },
+]
+
+[[package]]
+name = "rocm-bootstrap"
+version = "0.3.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-bootstrap/rocm_bootstrap-0.3.0-py3-none-any.whl", hash = "sha256:62d0160ecdd86f7132dbab9aec257cb2c96327df2592b0633aa6bb56399cc095" },
+]
+
+[[package]]
+name = "rocm-sdk-core"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-core/rocm_sdk_core-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1010"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1010/rocm_sdk_device_gfx1010-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1011"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1011/rocm_sdk_device_gfx1011-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1012"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1012/rocm_sdk_device_gfx1012-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1030"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1030/rocm_sdk_device_gfx1030-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1031"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1031/rocm_sdk_device_gfx1031-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1032"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1032/rocm_sdk_device_gfx1032-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1033"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1033/rocm_sdk_device_gfx1033-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1034"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1034/rocm_sdk_device_gfx1034-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1035"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1035/rocm_sdk_device_gfx1035-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1036"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1036/rocm_sdk_device_gfx1036-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1100"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1100/rocm_sdk_device_gfx1100-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1101"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1101/rocm_sdk_device_gfx1101-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1102"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1102/rocm_sdk_device_gfx1102-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1103"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1103/rocm_sdk_device_gfx1103-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1150"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1150/rocm_sdk_device_gfx1150-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1151"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1151/rocm_sdk_device_gfx1151-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1152"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1152/rocm_sdk_device_gfx1152-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1153"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1153/rocm_sdk_device_gfx1153-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1200"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1200/rocm_sdk_device_gfx1200-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1201"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1201/rocm_sdk_device_gfx1201-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx1250"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx1250/rocm_sdk_device_gfx1250-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx908"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx908/rocm_sdk_device_gfx908-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx90a"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx90a/rocm_sdk_device_gfx90a-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx942"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx942/rocm_sdk_device_gfx942-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-device-gfx950"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "rocm-sdk-libraries" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-device-gfx950/rocm_sdk_device_gfx950-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "rocm-sdk-libraries"
+version = "10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/rocm-sdk-libraries/rocm_sdk_libraries-10.2.0-py3-none-linux_x86_64.whl" },
+]
+
+[[package]]
+name = "setuptools"
+version = "81.0.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/setuptools/setuptools-81.0.0-py3-none-any.whl", hash = "sha256:fdd925d5c5d9f62e4b74b30d6dd7828ce236fd6ed998a08d81de62ce5a6310d6" },
+]
+
+[[package]]
+name = "sympy"
+version = "1.14.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "mpmath" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/sympy/sympy-1.14.0-py3-none-any.whl", hash = "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5" },
+]
+
+[[package]]
+name = "therock-torch"
+version = "0"
+source = { virtual = "." }
+dependencies = [
+    { name = "torch" },
+    { name = "torchvision" },
+]
+
+[package.optional-dependencies]
+gfx1010 = [
+    { name = "torch", extra = ["device-gfx1010"] },
+    { name = "torchvision", extra = ["device-gfx1010"] },
+]
+gfx1011 = [
+    { name = "torch", extra = ["device-gfx1011"] },
+    { name = "torchvision", extra = ["device-gfx1011"] },
+]
+gfx1012 = [
+    { name = "torch", extra = ["device-gfx1012"] },
+    { name = "torchvision", extra = ["device-gfx1012"] },
+]
+gfx1030 = [
+    { name = "torch", extra = ["device-gfx1030"] },
+    { name = "torchvision", extra = ["device-gfx1030"] },
+]
+gfx1031 = [
+    { name = "torch", extra = ["device-gfx1031"] },
+    { name = "torchvision", extra = ["device-gfx1031"] },
+]
+gfx1032 = [
+    { name = "torch", extra = ["device-gfx1032"] },
+    { name = "torchvision", extra = ["device-gfx1032"] },
+]
+gfx1033 = [
+    { name = "torch", extra = ["device-gfx1033"] },
+    { name = "torchvision", extra = ["device-gfx1033"] },
+]
+gfx1034 = [
+    { name = "torch", extra = ["device-gfx1034"] },
+    { name = "torchvision", extra = ["device-gfx1034"] },
+]
+gfx1035 = [
+    { name = "torch", extra = ["device-gfx1035"] },
+    { name = "torchvision", extra = ["device-gfx1035"] },
+]
+gfx1036 = [
+    { name = "torch", extra = ["device-gfx1036"] },
+    { name = "torchvision", extra = ["device-gfx1036"] },
+]
+gfx1100 = [
+    { name = "torch", extra = ["device-gfx1100"] },
+    { name = "torchvision", extra = ["device-gfx1100"] },
+]
+gfx1101 = [
+    { name = "torch", extra = ["device-gfx1101"] },
+    { name = "torchvision", extra = ["device-gfx1101"] },
+]
+gfx1102 = [
+    { name = "torch", extra = ["device-gfx1102"] },
+    { name = "torchvision", extra = ["device-gfx1102"] },
+]
+gfx1103 = [
+    { name = "torch", extra = ["device-gfx1103"] },
+    { name = "torchvision", extra = ["device-gfx1103"] },
+]
+gfx1150 = [
+    { name = "torch", extra = ["device-gfx1150"] },
+    { name = "torchvision", extra = ["device-gfx1150"] },
+]
+gfx1151 = [
+    { name = "torch", extra = ["device-gfx1151"] },
+    { name = "torchvision", extra = ["device-gfx1151"] },
+]
+gfx1152 = [
+    { name = "torch", extra = ["device-gfx1152"] },
+    { name = "torchvision", extra = ["device-gfx1152"] },
+]
+gfx1153 = [
+    { name = "torch", extra = ["device-gfx1153"] },
+    { name = "torchvision", extra = ["device-gfx1153"] },
+]
+gfx1200 = [
+    { name = "torch", extra = ["device-gfx1200"] },
+    { name = "torchvision", extra = ["device-gfx1200"] },
+]
+gfx1201 = [
+    { name = "torch", extra = ["device-gfx1201"] },
+    { name = "torchvision", extra = ["device-gfx1201"] },
+]
+gfx1250 = [
+    { name = "torch", extra = ["device-gfx1250"] },
+    { name = "torchvision", extra = ["device-gfx1250"] },
+]
+gfx908 = [
+    { name = "torch", extra = ["device-gfx908"] },
+    { name = "torchvision", extra = ["device-gfx908"] },
+]
+gfx90a = [
+    { name = "torch", extra = ["device-gfx90a"] },
+    { name = "torchvision", extra = ["device-gfx90a"] },
+]
+gfx942 = [
+    { name = "torch", extra = ["device-gfx942"] },
+    { name = "torchvision", extra = ["device-gfx942"] },
+]
+gfx950 = [
+    { name = "torch", extra = ["device-gfx950"] },
+    { name = "torchvision", extra = ["device-gfx950"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "torch", specifier = "==2.15.*" },
+    { name = "torch", extras = ["device-gfx1010"], marker = "extra == 'gfx1010'" },
+    { name = "torch", extras = ["device-gfx1011"], marker = "extra == 'gfx1011'" },
+    { name = "torch", extras = ["device-gfx1012"], marker = "extra == 'gfx1012'" },
+    { name = "torch", extras = ["device-gfx1030"], marker = "extra == 'gfx1030'" },
+    { name = "torch", extras = ["device-gfx1031"], marker = "extra == 'gfx1031'" },
+    { name = "torch", extras = ["device-gfx1032"], marker = "extra == 'gfx1032'" },
+    { name = "torch", extras = ["device-gfx1033"], marker = "extra == 'gfx1033'" },
+    { name = "torch", extras = ["device-gfx1034"], marker = "extra == 'gfx1034'" },
+    { name = "torch", extras = ["device-gfx1035"], marker = "extra == 'gfx1035'" },
+    { name = "torch", extras = ["device-gfx1036"], marker = "extra == 'gfx1036'" },
+    { name = "torch", extras = ["device-gfx1100"], marker = "extra == 'gfx1100'" },
+    { name = "torch", extras = ["device-gfx1101"], marker = "extra == 'gfx1101'" },
+    { name = "torch", extras = ["device-gfx1102"], marker = "extra == 'gfx1102'" },
+    { name = "torch", extras = ["device-gfx1103"], marker = "extra == 'gfx1103'" },
+    { name = "torch", extras = ["device-gfx1150"], marker = "extra == 'gfx1150'" },
+    { name = "torch", extras = ["device-gfx1151"], marker = "extra == 'gfx1151'" },
+    { name = "torch", extras = ["device-gfx1152"], marker = "extra == 'gfx1152'" },
+    { name = "torch", extras = ["device-gfx1153"], marker = "extra == 'gfx1153'" },
+    { name = "torch", extras = ["device-gfx1200"], marker = "extra == 'gfx1200'" },
+    { name = "torch", extras = ["device-gfx1201"], marker = "extra == 'gfx1201'" },
+    { name = "torch", extras = ["device-gfx1250"], marker = "extra == 'gfx1250'" },
+    { name = "torch", extras = ["device-gfx908"], marker = "extra == 'gfx908'" },
+    { name = "torch", extras = ["device-gfx90a"], marker = "extra == 'gfx90a'" },
+    { name = "torch", extras = ["device-gfx942"], marker = "extra == 'gfx942'" },
+    { name = "torch", extras = ["device-gfx950"], marker = "extra == 'gfx950'" },
+    { name = "torchvision", specifier = ">=0.29.2,<0.30" },
+    { name = "torchvision", extras = ["device-gfx1010"], marker = "extra == 'gfx1010'" },
+    { name = "torchvision", extras = ["device-gfx1011"], marker = "extra == 'gfx1011'" },
+    { name = "torchvision", extras = ["device-gfx1012"], marker = "extra == 'gfx1012'" },
+    { name = "torchvision", extras = ["device-gfx1030"], marker = "extra == 'gfx1030'" },
+    { name = "torchvision", extras = ["device-gfx1031"], marker = "extra == 'gfx1031'" },
+    { name = "torchvision", extras = ["device-gfx1032"], marker = "extra == 'gfx1032'" },
+    { name = "torchvision", extras = ["device-gfx1033"], marker = "extra == 'gfx1033'" },
+    { name = "torchvision", extras = ["device-gfx1034"], marker = "extra == 'gfx1034'" },
+    { name = "torchvision", extras = ["device-gfx1035"], marker = "extra == 'gfx1035'" },
+    { name = "torchvision", extras = ["device-gfx1036"], marker = "extra == 'gfx1036'" },
+    { name = "torchvision", extras = ["device-gfx1100"], marker = "extra == 'gfx1100'" },
+    { name = "torchvision", extras = ["device-gfx1101"], marker = "extra == 'gfx1101'" },
+    { name = "torchvision", extras = ["device-gfx1102"], marker = "extra == 'gfx1102'" },
+    { name = "torchvision", extras = ["device-gfx1103"], marker = "extra == 'gfx1103'" },
+    { name = "torchvision", extras = ["device-gfx1150"], marker = "extra == 'gfx1150'" },
+    { name = "torchvision", extras = ["device-gfx1151"], marker = "extra == 'gfx1151'" },
+    { name = "torchvision", extras = ["device-gfx1152"], marker = "extra == 'gfx1152'" },
+    { name = "torchvision", extras = ["device-gfx1153"], marker = "extra == 'gfx1153'" },
+    { name = "torchvision", extras = ["device-gfx1200"], marker = "extra == 'gfx1200'" },
+    { name = "torchvision", extras = ["device-gfx1201"], marker = "extra == 'gfx1201'" },
+    { name = "torchvision", extras = ["device-gfx1250"], marker = "extra == 'gfx1250'" },
+    { name = "torchvision", extras = ["device-gfx908"], marker = "extra == 'gfx908'" },
+    { name = "torchvision", extras = ["device-gfx90a"], marker = "extra == 'gfx90a'" },
+    { name = "torchvision", extras = ["device-gfx942"], marker = "extra == 'gfx942'" },
+    { name = "torchvision", extras = ["device-gfx950"], marker = "extra == 'gfx950'" },
+]
+provides-extras = ["gfx1010", "gfx1011", "gfx1012", "gfx1030", "gfx1031", "gfx1032", "gfx1033", "gfx1034", "gfx1035", "gfx1036", "gfx1100", "gfx1101", "gfx1102", "gfx1103", "gfx1150", "gfx1151", "gfx1152", "gfx1153", "gfx1200", "gfx1201", "gfx1250", "gfx908", "gfx90a", "gfx942", "gfx950"]
+
+[[package]]
+name = "torch"
+version = "2.15.0+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "jinja2" },
+    { name = "networkx" },
+    { name = "rocm", extra = ["libraries"] },
+    { name = "rocm-bootstrap" },
+    { name = "setuptools" },
+    { name = "sympy" },
+    { name = "triton" },
+    { name = "typing-extensions" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/torch/torch-2.15.0%2Brocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:a84810c4e14f88028b3e809e9588fbeeb9c785b0d18a49f7df87074b5e62f928" },
+]
+
+[package.optional-dependencies]
+device-gfx1010 = [
+    { name = "amd-torch-device-gfx1010" },
+]
+device-gfx1011 = [
+    { name = "amd-torch-device-gfx1011" },
+]
+device-gfx1012 = [
+    { name = "amd-torch-device-gfx1012" },
+]
+device-gfx1030 = [
+    { name = "amd-torch-device-gfx1030" },
+]
+device-gfx1031 = [
+    { name = "amd-torch-device-gfx1031" },
+]
+device-gfx1032 = [
+    { name = "amd-torch-device-gfx1032" },
+]
+device-gfx1033 = [
+    { name = "amd-torch-device-gfx1033" },
+]
+device-gfx1034 = [
+    { name = "amd-torch-device-gfx1034" },
+]
+device-gfx1035 = [
+    { name = "amd-torch-device-gfx1035" },
+]
+device-gfx1036 = [
+    { name = "amd-torch-device-gfx1036" },
+]
+device-gfx1100 = [
+    { name = "amd-torch-device-gfx1100" },
+    { name = "amd-torch-device-gfx110x" },
+]
+device-gfx1101 = [
+    { name = "amd-torch-device-gfx1101" },
+    { name = "amd-torch-device-gfx110x" },
+]
+device-gfx1102 = [
+    { name = "amd-torch-device-gfx1102" },
+    { name = "amd-torch-device-gfx110x" },
+]
+device-gfx1103 = [
+    { name = "amd-torch-device-gfx1103" },
+    { name = "amd-torch-device-gfx110x" },
+]
+device-gfx1150 = [
+    { name = "amd-torch-device-gfx1150" },
+    { name = "amd-torch-device-gfx115x" },
+]
+device-gfx1151 = [
+    { name = "amd-torch-device-gfx1151" },
+    { name = "amd-torch-device-gfx115x" },
+]
+device-gfx1152 = [
+    { name = "amd-torch-device-gfx1152" },
+    { name = "amd-torch-device-gfx115x" },
+]
+device-gfx1153 = [
+    { name = "amd-torch-device-gfx1153" },
+    { name = "amd-torch-device-gfx115x" },
+]
+device-gfx1200 = [
+    { name = "amd-torch-device-gfx12-0" },
+    { name = "amd-torch-device-gfx1200" },
+]
+device-gfx1201 = [
+    { name = "amd-torch-device-gfx12-0" },
+    { name = "amd-torch-device-gfx1201" },
+]
+device-gfx1250 = [
+    { name = "amd-torch-device-gfx1250" },
+]
+device-gfx908 = [
+    { name = "amd-torch-device-gfx908" },
+]
+device-gfx90a = [
+    { name = "amd-torch-device-gfx90a" },
+]
+device-gfx942 = [
+    { name = "amd-torch-device-gfx942" },
+]
+device-gfx950 = [
+    { name = "amd-torch-device-gfx950" },
+]
+
+[[package]]
+name = "torchvision"
+version = "0.29.2+rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "rocm-bootstrap" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/torchvision/torchvision-0.29.2%2Brocm10.2.0-py3-none-linux_x86_64.whl", hash = "sha256:78984e16e317de9e2bf7608261c658a43c999c1e0ab7804c2227840ae1e9ca2d" },
+]
+
+[package.optional-dependencies]
+device-gfx1010 = [
+    { name = "amd-torchvision-device-gfx1010" },
+]
+device-gfx1011 = [
+    { name = "amd-torchvision-device-gfx1011" },
+]
+device-gfx1012 = [
+    { name = "amd-torchvision-device-gfx1012" },
+]
+device-gfx1030 = [
+    { name = "amd-torchvision-device-gfx1030" },
+]
+device-gfx1031 = [
+    { name = "amd-torchvision-device-gfx1031" },
+]
+device-gfx1032 = [
+    { name = "amd-torchvision-device-gfx1032" },
+]
+device-gfx1033 = [
+    { name = "amd-torchvision-device-gfx1033" },
+]
+device-gfx1034 = [
+    { name = "amd-torchvision-device-gfx1034" },
+]
+device-gfx1035 = [
+    { name = "amd-torchvision-device-gfx1035" },
+]
+device-gfx1036 = [
+    { name = "amd-torchvision-device-gfx1036" },
+]
+device-gfx1100 = [
+    { name = "amd-torchvision-device-gfx1100" },
+]
+device-gfx1101 = [
+    { name = "amd-torchvision-device-gfx1101" },
+]
+device-gfx1102 = [
+    { name = "amd-torchvision-device-gfx1102" },
+]
+device-gfx1103 = [
+    { name = "amd-torchvision-device-gfx1103" },
+]
+device-gfx1150 = [
+    { name = "amd-torchvision-device-gfx1150" },
+]
+device-gfx1151 = [
+    { name = "amd-torchvision-device-gfx1151" },
+]
+device-gfx1152 = [
+    { name = "amd-torchvision-device-gfx1152" },
+]
+device-gfx1153 = [
+    { name = "amd-torchvision-device-gfx1153" },
+]
+device-gfx1200 = [
+    { name = "amd-torchvision-device-gfx1200" },
+]
+device-gfx1201 = [
+    { name = "amd-torchvision-device-gfx1201" },
+]
+device-gfx1250 = [
+    { name = "amd-torchvision-device-gfx1250" },
+]
+device-gfx908 = [
+    { name = "amd-torchvision-device-gfx908" },
+]
+device-gfx90a = [
+    { name = "amd-torchvision-device-gfx90a" },
+]
+device-gfx942 = [
+    { name = "amd-torchvision-device-gfx942" },
+]
+device-gfx950 = [
+    { name = "amd-torchvision-device-gfx950" },
+]
+
+[[package]]
+name = "triton"
+version = "3.9.0+git0a6e13e6.rocm10.2.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/pytorch/whl-next/triton/triton-3.9.0%2Bgit0a6e13e6.rocm10.2.0-cp314-cp314-linux_x86_64.whl", hash = "sha256:0d5b6dc9cec83e0f0910bc11457ebd7d16b25b55a95e3dd6bcfc512911c87f79" },
+]
+
+[[package]]
+name = "typing-extensions"
+version = "4.16.0"
+source = { registry = "https://stable.repo.amd.com/rocm/whl-next/" }
+wheels = [
+    { url = "https://stable.repo.amd.com/rocm/core/whl-next/typing-extensions/typing_extensions-4.16.0-py3-none-any.whl", hash = "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8" },
+]

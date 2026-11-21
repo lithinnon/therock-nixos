@@ -23,7 +23,7 @@
   lib,
   mkTheRock,
   gfx,
-  devicePackages,
+  devicePackagesFor,
 }:
 final: prev:
 let
@@ -78,13 +78,28 @@ let
     });
   dist = n: "${n}-${version}.dist-info";
 
+  devicePackages = devicePackagesFor gfx;
   # AOTriton finds its images next to the real libaotriton file, so each set
-  # gets a copy (32 MB) beside links to its image families: those in AMD's
-  # family wheels (amd-torch-device-gfx115x, -gfx12-0, ...) in this set's
-  # closure, else (amd-torch-device-gfxNNNN depended on directly) AOTriton's
-  # release images.
+  # gets a copy (32 MB) beside links to its targets' image families: from
+  # AMD's family wheel when the target has one in the lock
+  # (amd-torch-device-gfx115x, -gfx12-0, ...), else AOTriton's release images
+  # (none for some targets, e.g. RDNA1/2: SDPA then uses other kernels).
   isTarget = n: builtins.match "amd-torch-device-gfx[0-9a-f]+" n != null;
-  familyWheels = lib.filter (n: lib.hasPrefix "amd-torch-device-" n && !isTarget n) devicePackages;
+  imagesFor =
+    t:
+    let
+      families = lib.filter (n: lib.hasPrefix "amd-torch-device-" n && !isTarget n) (devicePackagesFor [
+        t
+      ]);
+    in
+    if families != [ ] then
+      map (p: "${final.${p}}/${sp}/torch/lib/aotriton.images") families
+    else
+      map (i: "${i}/aotriton.images")
+        (mkTheRock {
+          inherit pkgs version;
+          gfx = [ t ];
+        }).aotriton;
   torchSet = lib.optionalString (prev ? torch) ''
     cp ${./therock_torch.py} $out/${sp}/_therock_torch.py
     a=$out/${sp}/_therock_aotriton
@@ -92,14 +107,9 @@ let
     for f in ${final.torch}/${sp}/torch/lib/libaotriton_v2.so.*; do
       [ -L "$f" ] || cp "$f" $a/
     done
-    ${
-      if familyWheels != [ ] then
-        lib.concatMapStrings (
-          p: "ln -s ${final.${p}}/${sp}/torch/lib/aotriton.images/* $a/aotriton.images/\n"
-        ) familyWheels
-      else
-        lib.concatMapStrings (i: "ln -s ${i}/aotriton.images/* $a/aotriton.images/\n") rock.aotriton
-    }
+    ${lib.concatMapStrings (d: "ln -s ${d}/* $a/aotriton.images/\n") (
+      lib.unique (lib.concatMap imagesFor gfx)
+    )}
   '';
 
   # ROCm's libraries in the per-wheel store paths every GPU set shares, so
@@ -110,6 +120,10 @@ let
     "${rock.core}/_rocm_sdk_core/lib/rocm_sysdeps/lib"
     "${rock.libraries}/_rocm_sdk_libraries/lib"
   ];
+
+  # Build variables, minus those the project sets itself (uv's
+  # extra-build-variables become derivation attributes, which `env` can't repeat).
+  buildEnv = old: vars: (old.env or { }) // lib.filterAttrs (n: _: !(old ? ${n})) vars;
 
   linkAgainst = dirs: old: {
     dontStrip = true;
@@ -195,7 +209,7 @@ in
       pkgs.patchelf
       pkgs.removeReferencesTo
     ];
-    env = (old.env or { }) // {
+    env = buildEnv old {
       SETUPTOOLS_SCM_PRETEND_VERSION = old.version;
       PREBUILD_KERNELS = "0";
       ENABLE_CK = "0";
@@ -250,7 +264,7 @@ in
         rocm = [ "libraries" ];
         amd-aiter = [ ];
       };
-    env = (old.env or { }) // {
+    env = buildEnv old {
       FLASH_ATTENTION_TRITON_AMD_ENABLE = "TRUE";
       FLASH_ATTENTION_USE_SYSTEM_AITER = "TRUE";
       FLASH_ATTENTION_SKIP_CUDA_BUILD = "TRUE";

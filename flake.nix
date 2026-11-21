@@ -1,10 +1,28 @@
 {
   description = "AMD TheRock (ROCm) for NixOS: one shared ROCm per (version, GPU target)";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # for lib.pytorchProject (projects need no inputs but therock)
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   outputs =
-    { self, nixpkgs }:
+    { self, nixpkgs, ... }@inputs:
     let
       inherit (nixpkgs) lib;
       system = "x86_64-linux"; # TheRock publishes x86_64 Linux builds only
@@ -17,18 +35,32 @@
     in
     {
       lib = {
-        inherit (therockLib) mkTheRock versions defaultVersion;
+        inherit (therockLib)
+          mkTheRock
+          versions
+          defaultVersion
+          canonicalGfx
+          gfxSetName
+          families
+          ;
         # therock.lib.mkShell { pkgs; gfx; ... }: dev shell with the SDK
         mkShell = args: therockLib.mkShell ({ inherit pkgs; } // args);
         # therock.lib.uv2nix { pkgs; lockFile = ./uv.lock; }: see uv2nix/default.nix
         uv2nix = import ./uv2nix { inherit therockLib; };
+        # therock.lib.pytorchProject { src = ./.; }: a plain uv project's flake
+        # outputs (see uv2nix/project.nix)
+        pytorchProject = import ./uv2nix/project.nix {
+          inherit therockLib inputs;
+          uv2nixLib = self.lib.uv2nix;
+          therockPkgs = pkgs;
+        };
       };
 
       templates = {
-        default = self.templates.uv2nix;
-        uv2nix = {
-          path = ./templates/uv2nix;
-          description = "uv2nix project with ROCm torch on the shared TheRock; `nix run .#lock`, then `nix develop`";
+        default = self.templates.pytorch;
+        pytorch = {
+          path = ./templates/pytorch;
+          description = "uv project with ROCm torch on the shared TheRock (or `nix run .#init` in an existing one)";
         };
         hip = {
           path = ./templates/hip;
@@ -36,7 +68,7 @@
         };
       };
 
-      devShells.${system} = lib.mapAttrs (gfx: _: therockLib.mkShell { inherit pkgs gfx; }) perTarget;
+      devShells.${system} = therockLib.perSet hashed (gfx: therockLib.mkShell { inherit pkgs gfx; });
 
       nixosModules.default = import ./modules/nixos.nix {
         inherit therockLib;
@@ -241,6 +273,36 @@
                 touch $out
               '';
 
+            # pytorchProject from a plain PyPI lock: ROCm torch swapped in, no
+            # CUDA packages, one torch store path for every GPU set.
+            pytorch-project =
+              let
+                p = self.lib.pytorchProject { src = ./tests/pytorch; };
+                one = p.packages.${system}.gfx1151;
+                two = p.legacyPackages.${system}.venvs."gfx1100+gfx1151";
+              in
+              pkgs.runCommand "therock-pytorch-project"
+                {
+                  exportReferencesGraph = [
+                    "one"
+                    one
+                    "two"
+                    two
+                  ];
+                }
+                ''
+                  paths() { grep '^/nix/store/' "$1" | sort -u; }
+                  if paths one | grep -E -- '-(nvidia-|cuda-)'; then
+                    echo "CUDA packages in the venv" >&2; exit 1
+                  fi
+                  t1=$(paths one | grep -E -- '-torch-[0-9]'); t2=$(paths two | grep -E -- '-torch-[0-9]')
+                  if [ -z "$t1" ] || [ "$t1" != "$t2" ]; then
+                    echo "torch differs between GPU sets: $t1 / $t2" >&2; exit 1
+                  fi
+                  HOME=$TMPDIR ${one}/bin/python -c "import torch, torchvision; assert torch.version.hip; print(torch.__version__, torchvision.__version__)"
+                  touch $out
+                '';
+
             # templates/hip builds against the SDK and links only the runtime.
             hip-template = pkgs.stdenv.mkDerivation {
               name = "therock-hip-template";
@@ -278,6 +340,48 @@
                   (builtins.readFile ./apps/gpu-check.sh);
             }
           );
+        };
+
+        init = {
+          type = "app";
+          meta.description = "Make the uv project here (or a new one) use ROCm torch via therock-nixos";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "therock-init";
+              runtimeInputs = [
+                pkgs.uv
+                pkgs.git
+                pkgs.nix
+                pkgs.coreutils
+                pkgs.gnugrep
+                pkgs.gnused
+              ];
+              runtimeEnv = {
+                UV_PYTHON = pkgs.python3.interpreter;
+                UV_PYTHON_DOWNLOADS = "never";
+              };
+              text = lib.replaceStrings [ "@template@" ] [ "${./templates/pytorch}" ] (
+                builtins.readFile ./apps/init.sh
+              );
+            }
+          );
+        };
+
+        # Re-lock and hash the ROCm torch stack pytorchProject swaps in, for
+        # every GPU target (run in a checkout; downloads ~3 GB).
+        stack-lock = {
+          type = "app";
+          meta.description = "Lock + hash uv2nix/stack (the ROCm torch stack) for every GPU target";
+          program = "${pkgs.writeShellScript "therock-stack-lock" ''
+            cd "$(${pkgs.git}/bin/git rev-parse --show-toplevel)/uv2nix/stack" || exit 1
+            exec ${
+              (self.lib.uv2nix {
+                inherit pkgs;
+                lockFile = ./uv2nix/stack/uv.lock;
+              }).lockApp.program
+            } \
+              "$@" $(${pkgs.gnugrep}/bin/grep -oE '^gfx[0-9a-f]+' pyproject.toml)
+          ''}";
         };
 
         update = {

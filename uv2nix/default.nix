@@ -47,7 +47,7 @@ in
     import ./overrides.nix {
       inherit pkgs lib gfx;
       inherit (therockLib) mkTheRock;
-      devicePackages = targets.devicePackagesFor gfx;
+      inherit (targets) devicePackagesFor;
     };
 
   perTarget =

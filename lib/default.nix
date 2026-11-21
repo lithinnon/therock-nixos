@@ -51,6 +51,57 @@ let
 
   # "gfx1100+gfx1151": a canonical set as one name (store paths, outputs).
   gfxSetName = gfx: lib.concatStringsSep "+" (canonicalGfx gfx);
+
+  # GPU families, for outputs covering several machines (CI, a cluster):
+  # `.#rdna3` = every RDNA3 target. Only hashed targets end up in an output.
+  families = {
+    rdna1 = [
+      "gfx1010"
+      "gfx1011"
+      "gfx1012"
+    ];
+    rdna2 = [
+      "gfx1030"
+      "gfx1031"
+      "gfx1032"
+      "gfx1033"
+      "gfx1034"
+      "gfx1035"
+      "gfx1036"
+    ];
+    rdna3 = [
+      "gfx1100"
+      "gfx1101"
+      "gfx1102"
+      "gfx1103"
+    ];
+    rdna35 = [
+      "gfx1150"
+      "gfx1151"
+      "gfx1152"
+      "gfx1153"
+    ];
+    rdna4 = [
+      "gfx1200"
+      "gfx1201"
+    ];
+    cdna = [
+      "gfx908"
+      "gfx90a"
+      "gfx942"
+      "gfx950"
+    ];
+  };
+
+  # { gfxNNNN = f [ "gfxNNNN" ]; <family> = f [ ...ready members ]; all = f ready; }
+  # for the targets in `ready` (families without one are left out).
+  perSet =
+    ready: f:
+    lib.genAttrs ready (t: f [ t ])
+    // lib.mapAttrs (_: f) (
+      lib.filterAttrs (_: ts: ts != [ ]) (lib.mapAttrs (_: lib.filter (t: lib.elem t ready)) families)
+    )
+    // lib.optionalAttrs (ready != [ ]) { all = f ready; };
 in
 {
   inherit
@@ -59,6 +110,8 @@ in
     aotritonFamily
     canonicalGfx
     gfxSetName
+    families
+    perSet
     ;
 
   mkTheRock =
